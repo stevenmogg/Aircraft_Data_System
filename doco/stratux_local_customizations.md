@@ -159,14 +159,9 @@ New wlan1 hotspot client config file added and installed.
 
 Current defaults:
 
-- Primary hotspot enabled:
-  - SSID `CHANGE_ME_HOTSPOT_SSID`
-  - PSK `CHANGE_ME_HOTSPOT_PASSWORD`
-  - priority 20
-- Secondary fallback present but commented out:
-  - SSID `CHANGE_ME_FALLBACK_SSID`
-  - same PSK
-  - priority 10
+- Primary hotspot block enabled with placeholder credentials
+- Secondary fallback block present but commented out
+- Priority order preserved (primary higher than fallback)
 
 ### Why
 

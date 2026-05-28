@@ -156,9 +156,9 @@ Related templates/files:
 
 Current hotspot configuration policy in this repo:
 
-- Primary uplink hotspot: `CHANGE_ME_HOTSPOT_SSID` (enabled, higher priority)
-- Optional fallback hotspot: `CHANGE_ME_FALLBACK_SSID` (present but commented out)
-- To enable iPad fallback, uncomment the second `network={...}` block in both wlan1 config templates.
+- Primary uplink hotspot block is enabled by default in templates
+- Optional fallback hotspot block is present but commented out
+- Credentials are placeholder values and must be updated after flash or in private local builds
 
 ---
 
