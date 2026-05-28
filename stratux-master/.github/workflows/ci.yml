@@ -1,0 +1,40 @@
+name: CI
+
+on:
+  # Run on pull requests
+  pull_request:
+
+  # and pushes to main
+  push:
+    branches:
+      - master
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  # This workflow contains a single job called "build"
+  build:
+    # The type of runner that the job will run on
+    runs-on: ubuntu-24.04-arm
+
+    # Steps represent a sequence of tasks that will be executed as part of the job
+    steps:
+      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0 # fetch the full repository, necessary as the latest tag is used during the build of the deb
+
+      - name: Update submodule
+        run: git submodule update --init --recursive
+
+      - name: make ddpkg
+        run: make ddpkg
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: stratux debian package
+          path: |
+            *.deb
+          if-no-files-found: error

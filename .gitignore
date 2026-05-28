@@ -1,0 +1,5 @@
+*.img
+*.zip
+
+# Local cloned/build trees used for image builds
+stratux-v2.0-pre4/

@@ -1,0 +1,46 @@
+auto lo
+
+iface lo inet loopback
+
+# Wired management link to Mac host.
+# Keep this static so SSH remains predictable even when Internet Sharing is off.
+auto eth0
+iface eth0 inet static
+  address 192.168.50.2
+  netmask 255.255.255.0
+
+allow-hotplug wlan0
+
+
+# AP or AP+Client -> create seperate ap0 virtual interface for the AP; optionally use wlan0 for client connection
+iface ap0 inet static
+  address 192.168.10.1
+  netmask 255.255.255.0
+  post-up /opt/stratux/bin/stratux-wifi.sh ap0 0;
+
+
+
+
+# Pure AP mode
+iface wlan0 inet manual
+  pre-up iw wlan0 set type managed; iw phy0 interface add ap0 type __ap; ifup ap0
+  wireless-power off
+  post-down ifdown ap0; ifconfig ap0 down; iw ap0 del
+
+
+
+# Secondary Wi-Fi uplink (USB dongle) for internet backhaul.
+# Intended to connect to phone hotspot while ap0 continues serving cockpit clients.
+allow-hotplug wlan1
+iface wlan1 inet dhcp
+  wpa-conf /etc/wpa_supplicant/wpa_supplicant-wlan1.conf
+  metric 50
+  pre-up echo 1 > /proc/sys/net/ipv4/ip_forward
+  post-up /sbin/iw dev wlan1 set power_save off || true
+  post-up /bin/sh -c "iptables -t nat -C POSTROUTING -o wlan1 -j MASQUERADE || iptables -t nat -A POSTROUTING -o wlan1 -j MASQUERADE"
+  post-up /bin/sh -c "iptables -C FORWARD -i wlan1 -o ap0 -m state --state RELATED,ESTABLISHED -j ACCEPT || iptables -A FORWARD -i wlan1 -o ap0 -m state --state RELATED,ESTABLISHED -j ACCEPT"
+  post-up /bin/sh -c "iptables -C FORWARD -i ap0 -o wlan1 -j ACCEPT || iptables -A FORWARD -i ap0 -o wlan1 -j ACCEPT"
+  post-down iptables -t nat -D POSTROUTING -o wlan1 -j MASQUERADE || true
+  post-down iptables -D FORWARD -i wlan1 -o ap0 -m state --state RELATED,ESTABLISHED -j ACCEPT || true
+  post-down iptables -D FORWARD -i ap0 -o wlan1 -j ACCEPT || true
+
