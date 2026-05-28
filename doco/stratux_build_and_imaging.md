@@ -6,6 +6,7 @@ Use this together with:
 
 - [development_environment.md](development_environment.md)
 - [cozy_aircraft_data_system_stage1.md](cozy_aircraft_data_system_stage1.md)
+- [stratux_local_customizations.md](stratux_local_customizations.md)
 
 ---
 

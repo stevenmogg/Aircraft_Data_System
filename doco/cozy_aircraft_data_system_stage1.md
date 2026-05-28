@@ -2,7 +2,7 @@
 ## System Specification – Stage 1 (Revised)
 **Distributed Avionics Data System with FIX-Gateway Core**
 
-**See also:** [Development environment — Mac workstation and Raspberry Pi](development_environment.md) · [Stratux build and imaging workflow](stratux_build_and_imaging.md)
+**See also:** [Development environment — Mac workstation and Raspberry Pi](development_environment.md) · [Stratux build and imaging workflow](stratux_build_and_imaging.md) · [Stratux local customizations](stratux_local_customizations.md)
 
 ---
 
