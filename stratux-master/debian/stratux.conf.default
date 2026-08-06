@@ -1,0 +1,16 @@
+{
+  "UAT_Enabled": true,
+  "OGN_Enabled": false,
+  "DeveloperMode": false,
+  "WiFiMode": 2,
+  "WiFiInternetPassThroughEnabled": true,
+  "WiFiCountry": "AU",
+  "WiFiSSID": "Stratux",
+  "WiFiSecurityEnabled": false,
+  "WiFiClientNetworks": [
+    {
+      "SSID": "IdeasMan_iPhone",
+      "Password": "CHANGE_ME"
+    }
+  ]
+}

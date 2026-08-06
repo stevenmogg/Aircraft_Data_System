@@ -280,6 +280,7 @@ Workflow (local Mac repo, Pi deploy, optional Remote SSH): [development_environm
 - Pi + Stratux stable
 - Wi-Fi working
 - AvPlan connected
+- **Flight plan file share:** SMB share `cozy-data` on `/cozy-data-system/data/flight-plans/` for AvPlan export from iPad/iPhone ([flight_plan_file_share.md](flight_plan_file_share.md))
 
 ## Phase 2
 - FIX-Gateway installed
@@ -347,5 +348,7 @@ Stage 1 has been implemented in the local project baseline, including:
 - Stratux AP baseline (`ap0` on `192.168.10.1`)
 - Secondary `wlan1` uplink support with iPhone hotspot credentials in build templates
 - AP-to-uplink passthrough hooks (forwarding/NAT) for dual-Wi-Fi operation
+- MPI3508 HDMI console (720×480 + large font)
+- SMB flight-plan share (`cozy-data` → `/cozy-data-system/data/flight-plans/`)
 
-Reference runbook: [stratux_build_and_imaging.md](stratux_build_and_imaging.md).
+Reference runbook: [stratux_build_and_imaging.md](stratux_build_and_imaging.md). Flight plan share: [flight_plan_file_share.md](flight_plan_file_share.md).

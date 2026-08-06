@@ -9,6 +9,12 @@ dtparam=i2c1_baudrate=400000
 dtparam=i2c_arm_baudrate=400000
 dtparam=spi=on
 
+# MPI3508 3.5" HDMI panel (480x320) on Pi 5.
+# Enable real KMS so cmdline video= is honoured (firmware bcm2708_fb follows bad EDID).
+dtoverlay=vc4-kms-v3d-pi5
+max_framebuffers=2
+disable_fw_kms_setup=1
+
 # move RPi3 Bluetooth off of hardware UART to free up connection for GPS
 #dtoverlay=disable-bt
 enable_uart=1

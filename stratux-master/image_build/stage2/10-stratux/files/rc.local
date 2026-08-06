@@ -24,4 +24,14 @@ fi
 #
 /usr/sbin/logrotate /etc/logrotate.conf
 
+# Large console font for MPI3508 HDMI panel (720x480 scaled to 3.5")
+if [ -f /usr/share/consolefonts/Lat15-TerminusBold32x16.psf.gz ]; then
+  setfont Lat15-TerminusBold32x16 2>/dev/null || true
+fi
+
+# Cozy data SMB share (AvPlan flight plan drop folder)
+if [ -x /usr/sbin/smbd ] && ! pgrep -x smbd >/dev/null 2>&1; then
+  /usr/sbin/smbd
+fi
+
 exit 0

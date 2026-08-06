@@ -148,8 +148,8 @@ dpkg: all prep_dpkg wwwdpkg ogn/ddb.json optinstall_dpkg
 	chmod 755 $(DEBPKG_BASE)/DEBIAN/preinst
 	chmod 755 $(DEBPKG_BASE)/DEBIAN/postinst
 	chmod 755 $(DEBPKG_BASE)/DEBIAN/prerm
-	# Create the default US settings for the config default
-	echo '{"UAT_Enabled": true,"OGN_Enabled": false,"DeveloperMode": false}' > $(DEBPKG_HOME)/cfg/stratux.conf.default
+	# Default Stage-1 settings: AP+Client with phone hotspot uplink + passthrough
+	cp -f debian/stratux.conf.default $(DEBPKG_HOME)/cfg/stratux.conf.default
 	# Create the debian package
 	dpkg-deb -b $(DEBPKG_BASE)
 	# Rename the file and move it to the base directory. Include the arch in the name

@@ -138,27 +138,25 @@ For initial single-receiver 1090 testing:
 
 ## 10. Local network defaults in this codebase
 
-This repository now bakes in these defaults for new images:
+This repository bakes these defaults into new images:
 
 - `eth0` static management IP: `192.168.50.2/24`
 - Stratux AP on `ap0`: `192.168.10.1/24`
-- Optional secondary uplink on `wlan1` (USB Wi-Fi dongle):
-  - DHCP client
-  - hotspot credentials read from `/etc/wpa_supplicant/wpa_supplicant-wlan1.conf`
-  - AP-to-uplink forwarding/NAT rules applied on `wlan1` up/down
+- **AP+Client (WiFiMode 2)** with internet passthrough enabled
+- Onboard `wlan0` joins the phone hotspot; AP clients can reach internet via NAT
+- Optional backup uplink on `wlan1` (USB Wi-Fi dongle, metric 100)
+- Boot config `/boot/firmware/stratux.conf` matches these settings for first-boot rewrite + UI
 
 Related templates/files:
 
 - `image_build/stage2/10-stratux/files/interfaces`
 - `debian/interfaces.template`
+- `image_build/stage2/10-stratux/files/wpa_supplicant.conf`
 - `image_build/stage2/10-stratux/files/wpa_supplicant_wlan1.conf`
 - `debian/wpa_supplicant_wlan1.conf.template`
+- `debian/stratux.conf.default` / `image_build/.../files/stratux.conf.default`
 
-Current hotspot configuration policy in this repo:
-
-- Primary uplink hotspot block is enabled by default in templates
-- Optional fallback hotspot block is present but commented out
-- Credentials are placeholder values and must be updated after flash or in private local builds
+Hotspot policy: primary phone SSID is enabled in templates; optional iPad fallback is commented out.
 
 ---
 

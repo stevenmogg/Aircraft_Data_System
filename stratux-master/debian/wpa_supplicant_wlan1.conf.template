@@ -2,18 +2,18 @@ ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
 update_config=1
 country=AU
 
+# Optional USB Wi-Fi dongle uplink (backup to onboard wlan0 client)
 network={
-    ssid="CHANGE_ME_HOTSPOT_SSID"
-    psk="CHANGE_ME_HOTSPOT_PASSWORD"
+    ssid="IdeasMan_iPhone"
+    psk="CHANGE_ME"
     key_mgmt=WPA-PSK
     priority=20
 }
 
 # Optional iPad hotspot fallback (disabled by default).
-# Uncomment if you want automatic failover when iPhone hotspot is unavailable.
 # network={
-#     ssid="CHANGE_ME_FALLBACK_SSID"
-#     psk="CHANGE_ME_HOTSPOT_PASSWORD"
+#     ssid="IdeasMan_iPad"
+#     psk="CHANGE_ME"
 #     key_mgmt=WPA-PSK
 #     priority=10
 # }

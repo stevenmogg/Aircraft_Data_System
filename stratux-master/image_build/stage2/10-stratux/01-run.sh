@@ -8,7 +8,7 @@
 apt update
 
 on_chroot << EOF
-    apt install --yes dnsmasq ifplugd iptables
+    apt install --yes dnsmasq ifplugd iptables console-setup console-setup-linux fonts-terminus samba
 
     # try to reduce writing to SD card as much as possible, so they don't get
     # bricked when yanking the power cable
@@ -115,8 +115,14 @@ install -m 644 files/motd "${ROOTFS_DIR}/etc/motd"
 install files/stratux-dnsmasq.conf ${ROOTFS_DIR}/etc/dnsmasq.d/stratux-dnsmasq.conf
 
 install files/wpa_supplicant_ap.conf ${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant_ap.conf
+install files/wpa_supplicant.conf ${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant.conf
 install files/wpa_supplicant_wlan1.conf ${ROOTFS_DIR}/etc/wpa_supplicant/wpa_supplicant-wlan1.conf
 install files/interfaces ${ROOTFS_DIR}/etc/network/interfaces
+# Bake Stage-1 network defaults into Stratux settings so UI/runtime matches image networking
+mkdir -p ${ROOTFS_DIR}/opt/stratux/cfg
+install files/stratux.conf.default ${ROOTFS_DIR}/opt/stratux/cfg/stratux.conf.default
+# Boot partition config is what Stratux reads; WiFi keys also trigger first-boot network rewrite
+install files/stratux.conf.default ${ROOTFS_DIR}/boot/firmware/stratux.conf
 
 # sshd config
 install files/sshd_config ${ROOTFS_DIR}/etc/ssh/sshd_config
@@ -149,12 +155,60 @@ touch ${ROOTFS_DIR}/boot/firmware/.stratux-first-boot
 # startup scripts
 install files/rc.local ${ROOTFS_DIR}/etc/rc.local
 
+# Cozy Aircraft Data System directory tree (SMB share root + flight plans)
+install -d -m 755 ${ROOTFS_DIR}/cozy-data-system
+install -d -m 775 ${ROOTFS_DIR}/cozy-data-system/data/flight-plans
+install -d -m 755 ${ROOTFS_DIR}/cozy-data-system/config
+install -d -m 755 ${ROOTFS_DIR}/cozy-data-system/fix_gateway_plugins
+install -m 644 files/cozy-data-system/README.txt ${ROOTFS_DIR}/cozy-data-system/README.txt
+touch ${ROOTFS_DIR}/cozy-data-system/data/flight-plans/.gitkeep
+
+# SMB share for iPad/iPhone (AvPlan flight plan drop folder)
+install -d -m 755 ${ROOTFS_DIR}/etc/samba/smb.conf.d
+install -m 644 files/samba/apple-vfs.conf ${ROOTFS_DIR}/etc/samba/smb.conf.d/apple-vfs.conf
+install -m 644 files/samba/cozy-data.conf ${ROOTFS_DIR}/etc/samba/smb.conf.d/cozy-data.conf
+on_chroot << EOF
+    chown -R pi:pi /cozy-data-system
+    chmod 775 /cozy-data-system/data
+    chmod 2775 /cozy-data-system/data/flight-plans
+    if ! grep -q 'smb.conf.d/apple-vfs.conf' /etc/samba/smb.conf 2>/dev/null; then
+        sed -i '/^\[global\]/a\
+   include = /etc/samba/smb.conf.d/apple-vfs.conf\
+   include = /etc/samba/smb.conf.d/cozy-data.conf' /etc/samba/smb.conf
+    fi
+    sed -i '/^include = \/etc\/samba\/smb.conf.d\/\*\.conf$/d' /etc/samba/smb.conf
+    if ! pdbedit -L 2>/dev/null | grep -q '^pi:'; then
+        (echo raspberry; echo raspberry) | smbpasswd -a pi -s
+    fi
+    systemctl enable smbd
+EOF
+
 # Optionally mount /dev/sda1 as /var/log - for logging to USB stick
 echo -e "\n/dev/sda1             /var/log        auto    defaults,nofail,noatime,x-systemd.device-timeout=1ms  0       2" >> ${ROOTFS_DIR}/etc/fstab
 
 # disable serial console, disable rfkill state restore, enable wifi on boot
 sed -i ${ROOTFS_DIR}/boot/firmware/cmdline.txt -e "s/console=serial0,[0-9]\+ /systemd.restore_state=0 rfkill.default_state=1 /"
 sed -i 's/quiet//g' ${ROOTFS_DIR}/boot/firmware/cmdline.txt
+
+# Force MPI3508 480x320 via KMS + custom EDID timings (panel rejects generic CVT from video=...M).
+# MPI3508 HDMI input reliably locks at 720x480 (panel scales to 480x320 LCD). Native 480x320
+# CVT modes often show "no signal" on Pi 5 KMS despite correct kmsprint output.
+mkdir -p "${ROOTFS_DIR}/lib/firmware/edid"
+install -m 644 files/edid/mpi3508.bin "${ROOTFS_DIR}/lib/firmware/edid/mpi3508.bin" 2>/dev/null || true
+VIDEO_ARGS='video=HDMI-A-1:720x480@60D video=HDMI-A-2:d'
+sed -i -E 's/[[:space:]]*video=HDMI-A-[12]:[^[:space:]]*//g' "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+sed -i -E 's/[[:space:]]*drm\.edid_firmware=[^[:space:]]*//g' "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+sed -i "s|^|${VIDEO_ARGS} |" "${ROOTFS_DIR}/boot/firmware/cmdline.txt"
+
+# Large console font so login/boot text is readable on 480x320
+mkdir -p "${ROOTFS_DIR}/etc/default"
+cat > "${ROOTFS_DIR}/etc/default/console-setup" << 'EOF'
+ACTIVE_CONSOLES="/dev/tty[1-6]"
+CHARMAP="UTF-8"
+CODESET="Lat15"
+FONTFACE="TerminusBold"
+FONTSIZE="16x32"
+EOF
 
 # Set the keyboard layout to US.
 sed -i ${ROOTFS_DIR}/etc/default/keyboard -e "/^XKBLAYOUT/s/\".*\"/\"us\"/"
