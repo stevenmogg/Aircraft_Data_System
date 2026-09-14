@@ -1,0 +1,10 @@
+# Cozy MGL CAN → FIX adapter (SocketCAN, receive-only).
+# Do not enable stock fixgw.plugins.mgl: it would TX as an RDAC and
+# map TC channels to EGT/CHT before this airframe mapping is known.
+mgl_can:
+  load: MGL_CAN
+  module: cozy_mgl_can
+  interface: socketcan
+  channel: can0
+  receive_only: true
+  decode_map: /cozy-data-system/config/mgl_can/decode_map.yaml

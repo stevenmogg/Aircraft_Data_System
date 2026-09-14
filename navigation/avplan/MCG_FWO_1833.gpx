@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="AvPlan" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+<metadata>	<link href="http://www.avsoft.com.au">
+<text>AvSoft</text>
+</link><time>2026-09-11T08:01:10Z</time>
+</metadata><wpt lon="144.983333" lat="-37.820000">
+<ele>0</ele>
+<name>MCG</name>
+<desc>MELBOURNE CRICKET GROUND</desc>
+<type>VFC</type>
+</wpt>
+<wpt lon="144.896389" lat="-37.829722">
+<ele>0</ele>
+<name>WES</name>
+<desc>WESTGATE BRIDGE</desc>
+<type>VFC</type>
+</wpt>
+<wpt lon="144.933333" lat="-37.766667">
+<ele>0</ele>
+<name>MVC</name>
+<desc>MOONEE VALLEY RACECOURSE</desc>
+<type>VFC</type>
+</wpt>
+<wpt lon="144.993889" lat="-37.795278">
+<ele>0</ele>
+<name>FWO</name>
+<desc>FREEWAY OVERPASS</desc>
+<type>VFC</type>
+</wpt>
+<rte>
+<name>MCG to FWO</name>
+<number>1</number>
+<extensions>
+<AvPlanLegDetails xmlns="avplan">
+<src>MCG</src>
+<desc>FWO</desc>
+<AvPlanHoldingTime>0</AvPlanHoldingTime>
+<AvPlanPOB>1</AvPlanPOB>
+<AvPlanTaxiTime>0</AvPlanTaxiTime>
+<AvPlanTaxiFuel>0</AvPlanTaxiFuel>
+<AvPlanApproachFuel>0</AvPlanApproachFuel>
+<AvPlanApproachTime>0</AvPlanApproachTime>
+<AvPlanStatus18></AvPlanStatus18>
+<AvPlanRTOW>0</AvPlanRTOW>
+<AvPlanRLW>0</AvPlanRLW>
+<AvPlanGroundRunning>0</AvPlanGroundRunning>
+<AvPlanDiscretionaryFuel>0</AvPlanDiscretionaryFuel>
+<AvPlanLoiterFuel>0.000000</AvPlanLoiterFuel>
+<AvPlanLoiterTime>0</AvPlanLoiterTime>
+<AvPlanAlternateHoldingFuel>0.000000</AvPlanAlternateHoldingFuel>
+<AvPlanAlternateHoldingtime>0</AvPlanAlternateHoldingtime>
+<AvPlanAlternateApproachFuel>0.000000</AvPlanAlternateApproachFuel>
+<AvPlanAlternateApproachTime>0</AvPlanAlternateApproachTime>
+<AvPlanLoading>
+<AvPlanLoad>
+<AvPlanLoadID>0</AvPlanLoadID>
+<AvPlanLoadValue>80.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>1</AvPlanLoadID>
+<AvPlanLoadValue>0.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>2</AvPlanLoadID>
+<AvPlanLoadValue>10.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>3</AvPlanLoadID>
+<AvPlanLoadValue>0.000000</AvPlanLoadValue>
+</AvPlanLoad></AvPlanLoading>
+<AvPlanFuelLoading>
+<AvPlanFuelLoad>
+<AvPlanFuelLoadID>0</AvPlanFuelLoadID>
+<AvPlanFuelLoadValue>120.000000</AvPlanFuelLoadValue>
+</AvPlanFuelLoad></AvPlanFuelLoading>
+</AvPlanLegDetails>
+</extensions>
+<rtept lat="-37.820000" lon="144.983333">	<name>MCG</name>
+	<type>VFC</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>0</AvPlanAltitude>
+	<desc>MELBOURNE CRICKET GROUND</desc>
+	<magvar>11.7726</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>0</AvPlanTrack>
+<AvPlanDistance>0</AvPlanDistance>
+<AvPlanDistanceRemain>11.68561267852783</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.829722" lon="144.896389">	<name>WES</name>
+	<type>VFC</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>(null)</AvPlanAltitude>
+	<desc>WESTGATE BRIDGE</desc>
+	<magvar>11.7389</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>250.1769</AvPlanTrack>
+<AvPlanDistance>4.171392440795898</AvPlanDistance>
+<AvPlanDistanceRemain>7.514220237731934</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.766667" lon="144.933333">	<name>MVC</name>
+	<type>VFC</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>(null)</AvPlanAltitude>
+	<desc>MOONEE VALLEY RACECOURSE</desc>
+	<magvar>11.7338</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>13.12004</AvPlanTrack>
+<AvPlanDistance>4.164776802062988</AvPlanDistance>
+<AvPlanDistanceRemain>3.349443435668945</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.795278" lon="144.993889">	<name>FWO</name>
+	<type>VFC</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>(null)</AvPlanAltitude>
+	<desc>FREEWAY OVERPASS</desc>
+	<magvar>11.7688</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>109.1208</AvPlanTrack>
+<AvPlanDistance>3.349443197250366</AvPlanDistance>
+<AvPlanDistanceRemain>2.384185791015625e-07</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept></rte>
+<trk>
+	<name>Track Log</name>
+	<trkseg>
+</trkseg>
+</trk>
+<extensions>
+<AvPlanPlanDetails  xmlns="avplan">
+<AvPlanRules>VFR</AvPlanRules>
+<AvPlanOrigin>MCG</AvPlanOrigin>
+<AvPlanDestination>FWO</AvPlanDestination>
+<AvPlanSARLeg>0</AvPlanSARLeg>
+<AvPlanRemarks></AvPlanRemarks>
+<AvPlanAircraft>COZ</AvPlanAircraft>
+<AvPlanTrip>CEC9C7CA-DBF0-4523-BD07-8C2BF2A82A98</AvPlanTrip>
+<AvPlanPerformanceProfile>55%</AvPlanPerformanceProfile>
+</AvPlanPlanDetails>
+</extensions>
+</gpx>

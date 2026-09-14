@@ -1,0 +1,12 @@
+# Cozy MGL SD card — insert triggers sync; remove clears any leftover mount.
+# Identification is by label MGL *or* ENIGMA.REC / XTFLIGHT.CSV on the volume
+# (other labels such as CHASE2 are fine).
+
+# Insert: labelled MGL
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_FS_LABEL}=="MGL", TAG+="systemd", ENV{SYSTEMD_WANTS}="cozy-mgl-card@%k.service"
+
+# Insert: any other USB VFAT partition (script skips if not an MGL card)
+ACTION=="add", SUBSYSTEM=="block", ENV{ID_BUS}=="usb", ENV{ID_FS_TYPE}=="vfat", ENV{ID_FS_LABEL}!="MGL", TAG+="systemd", ENV{SYSTEMD_WANTS}="cozy-mgl-card@%k.service"
+
+# Remove: clear stale mount if this partition was (or left) mounted
+ACTION=="remove", SUBSYSTEM=="block", ENV{ID_BUS}=="usb", ENV{DEVTYPE}=="partition", TAG+="systemd", ENV{SYSTEMD_WANTS}="cozy-mgl-card-release@%k.service"

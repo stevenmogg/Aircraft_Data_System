@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}MGL CAN — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>MGL</h1>
+    <p class="lede">Engineering view of raw SocketCAN traffic and YAML-mapped values. Not a flight display.</p>
+    {% include "mgl_subnav.html" %}
+    <div class="page-top-body status-line">
+      <span id="badge-if" class="badge">can0 …</span>
+      <span id="badge-rx" class="badge">RX …</span>
+      <span id="badge-ws" class="badge">WS …</span>
+      <button type="button" class="btn" id="btn-reload">Reload map</button>
+      <a class="btn" href="/status">← Status</a>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Interface <span class="twisty-meta" id="if-meta">can0</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="can-kv"></dl>
+      <p class="muted" id="can-err"></p>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Observed messages <span class="twisty-meta" id="msg-meta">raw</span></summary>
+    <div class="twisty-body table-wrap">
+      <table class="data" id="msg-table">
+        <thead>
+          <tr>
+            <th>CAN ID</th>
+            <th>Addr</th>
+            <th>Msg</th>
+            <th>Family</th>
+            <th>DLC</th>
+            <th>Hz</th>
+            <th>Age ms</th>
+            <th>Payload</th>
+            <th>Decoder</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="9" class="muted">Waiting for frames…</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Mapped values <span class="twisty-meta" id="map-meta">decode_map.yaml</span></summary>
+    <div class="twisty-body table-wrap">
+      <table class="data" id="map-table">
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Value</th>
+            <th>Units</th>
+            <th>FIX key</th>
+            <th>Age ms</th>
+            <th>Source</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="6" class="muted">No mapped fields yet…</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/mgl_can.js"></script>
+{% endblock %}

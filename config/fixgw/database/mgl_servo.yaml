@@ -1,0 +1,432 @@
+items:
+# MGL autopilot servo emulator (prefix MGL_SRV_).
+# Command keys are XTreme → Pi. CUR/RPLY/ENG are emulator replies.
+# TX is off unless MGL_SRV_ALLOW_TX and MGL_SRV_TX_ARMED.
+
+- key: MGL_SRV_ENABLED
+  description: Servo emulator enabled
+  type: bool
+  initial: false
+  tol: 0
+
+- key: MGL_SRV_ALLOW_TX
+  description: Config allow_tx interlock
+  type: bool
+  initial: false
+  tol: 0
+
+- key: MGL_SRV_TX_ARMED
+  description: Runtime TX armed
+  type: bool
+  initial: false
+  tol: 0
+
+- key: MGL_SRV_LAST_ID
+  description: Last XTreme identify servo number seen (0 if none)
+  type: float
+  min: 0.0
+  max: 16.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_LAST_ID_OK
+  description: Last identify was accepted by an armed virgin servo
+  type: bool
+  initial: false
+  tol: 2000
+
+# --- ROLL bank / roll virtual servo ---
+- key: MGL_SRV_ROLL_NUM
+  description: ROLL assigned servo number
+  type: float
+  min: 0.0
+  max: 16.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_ADDR
+  description: ROLL MGL device address
+  type: float
+  min: 0.0
+  max: 31.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_STATE
+  description: ROLL emulator state 0-4
+  type: float
+  min: 0.0
+  max: 4.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TGT
+  description: ROLL XTreme target (12-bit two's complement, right negative)
+  type: float
+  min: -2048.0
+  max: 2047.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TGT_UNW
+  description: ROLL XTreme target unwrapped
+  type: float
+  min: -10000000.0
+  max: 10000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_CUR
+  description: ROLL emulator current (12-bit two's complement)
+  type: float
+  min: -2048.0
+  max: 2047.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_CUR_UNW
+  description: ROLL emulator current unwrapped
+  type: float
+  min: -10000000.0
+  max: 10000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_ERR
+  description: ROLL circular position error
+  type: float
+  min: -2048.0
+  max: 2048.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_OPT
+  description: ROLL raw options byte
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TRQ_SET
+  description: ROLL torque setting nibble
+  type: float
+  min: 0.0
+  max: 15.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_STAT
+  description: ROLL raw status byte
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_VOLT
+  description: ROLL simulated servo supply
+  type: float
+  min: 0.0
+  max: 32.0
+  units: V
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TRQ
+  description: ROLL measured torque raw
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_HZ
+  description: ROLL command rate
+  type: float
+  min: 0.0
+  max: 100.0
+  units: Hz
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_AGE
+  description: ROLL command age
+  type: float
+  min: 0.0
+  max: 60000.0
+  units: ms
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_CMDS
+  description: ROLL command count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_RPLY
+  description: ROLL reply count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_BAD
+  description: ROLL invalid command count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TMO
+  description: ROLL timeout count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_ROLL_ENG_REQ
+  description: ROLL XTreme engage request (options bit 0, provisional)
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_TRQ_RST
+  description: ROLL XTreme torque-reset request (options bit 1, provisional)
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_ENG
+  description: ROLL emulator reported engaged
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_SLIP
+  description: ROLL emulator reported slipping
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_VALARM
+  description: ROLL emulator voltage alarm
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_IDOK
+  description: ROLL servo identity assigned
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_ROLL_IDARM
+  description: ROLL identify_armed
+  type: bool
+  initial: false
+  tol: 2000
+
+# --- PITCH pitch virtual servo ---
+- key: MGL_SRV_PITCH_NUM
+  description: PITCH assigned servo number
+  type: float
+  min: 0.0
+  max: 16.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_ADDR
+  description: PITCH MGL device address
+  type: float
+  min: 0.0
+  max: 31.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_STATE
+  description: PITCH emulator state 0-4
+  type: float
+  min: 0.0
+  max: 4.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TGT
+  description: PITCH XTreme target (12-bit two's complement, up negative)
+  type: float
+  min: -2048.0
+  max: 2047.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TGT_UNW
+  description: PITCH XTreme target unwrapped
+  type: float
+  min: -10000000.0
+  max: 10000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_CUR
+  description: PITCH emulator current (12-bit two's complement)
+  type: float
+  min: -2048.0
+  max: 2047.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_CUR_UNW
+  description: PITCH emulator current unwrapped
+  type: float
+  min: -10000000.0
+  max: 10000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_ERR
+  description: PITCH circular position error
+  type: float
+  min: -2048.0
+  max: 2048.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_OPT
+  description: PITCH raw options byte
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TRQ_SET
+  description: PITCH torque setting nibble
+  type: float
+  min: 0.0
+  max: 15.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_STAT
+  description: PITCH raw status byte
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_VOLT
+  description: PITCH simulated servo supply
+  type: float
+  min: 0.0
+  max: 32.0
+  units: V
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TRQ
+  description: PITCH measured torque raw
+  type: float
+  min: 0.0
+  max: 255.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_HZ
+  description: PITCH command rate
+  type: float
+  min: 0.0
+  max: 100.0
+  units: Hz
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_AGE
+  description: PITCH command age
+  type: float
+  min: 0.0
+  max: 60000.0
+  units: ms
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_CMDS
+  description: PITCH command count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_RPLY
+  description: PITCH reply count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_BAD
+  description: PITCH invalid command count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TMO
+  description: PITCH timeout count
+  type: float
+  min: 0.0
+  max: 1000000000.0
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_SRV_PITCH_ENG_REQ
+  description: PITCH XTreme engage request (options bit 0, provisional)
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_TRQ_RST
+  description: PITCH XTreme torque-reset request (options bit 1, provisional)
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_ENG
+  description: PITCH emulator reported engaged
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_SLIP
+  description: PITCH emulator reported slipping
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_VALARM
+  description: PITCH emulator voltage alarm
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_IDOK
+  description: PITCH servo identity assigned
+  type: bool
+  initial: false
+  tol: 2000
+
+- key: MGL_SRV_PITCH_IDARM
+  description: PITCH identify_armed
+  type: bool
+  initial: false
+  tol: 2000

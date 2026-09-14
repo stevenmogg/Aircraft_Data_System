@@ -1,0 +1,3 @@
+# One-off FIX keys that do not belong in a source file yet.
+# Prefer database/mgl_airtalk.yaml or database/mgl_rdac.yaml for those buses.
+items: []

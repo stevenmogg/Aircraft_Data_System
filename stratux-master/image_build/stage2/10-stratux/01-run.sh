@@ -155,13 +155,31 @@ touch ${ROOTFS_DIR}/boot/firmware/.stratux-first-boot
 # startup scripts
 install files/rc.local ${ROOTFS_DIR}/etc/rc.local
 
-# Cozy Aircraft Data System directory tree (SMB share root + flight plans)
+# Cozy Aircraft Data System directory tree (SMB share root + optional baked source)
 install -d -m 755 ${ROOTFS_DIR}/cozy-data-system
 install -d -m 775 ${ROOTFS_DIR}/cozy-data-system/data/flight-plans
 install -d -m 755 ${ROOTFS_DIR}/cozy-data-system/config
 install -d -m 755 ${ROOTFS_DIR}/cozy-data-system/fix_gateway_plugins
 install -m 644 files/cozy-data-system/README.txt ${ROOTFS_DIR}/cozy-data-system/README.txt
 touch ${ROOTFS_DIR}/cozy-data-system/data/flight-plans/.gitkeep
+if [ -d files/cozy-payload/web ]; then
+    rsync -a --exclude venv --exclude '__pycache__' --exclude '*.pyc' \
+        files/cozy-payload/ ${ROOTFS_DIR}/cozy-data-system/
+    if [ -d ${ROOTFS_DIR}/cozy-data-system/config/systemd ]; then
+        install -d -m 755 ${ROOTFS_DIR}/etc/systemd/system
+        install -m 644 ${ROOTFS_DIR}/cozy-data-system/config/systemd/* ${ROOTFS_DIR}/etc/systemd/system/ || true
+    fi
+    if [ -d ${ROOTFS_DIR}/cozy-data-system/config/udev ]; then
+        install -d -m 755 ${ROOTFS_DIR}/etc/udev/rules.d
+        install -m 644 ${ROOTFS_DIR}/cozy-data-system/config/udev/* ${ROOTFS_DIR}/etc/udev/rules.d/ || true
+    fi
+    on_chroot << EOF
+        chown -R pi:pi /cozy-data-system
+        systemctl enable cozy-can0.service 2>/dev/null || true
+        systemctl enable cozy-historian-data.service 2>/dev/null || true
+        systemctl enable cozy-mgl-plans.path 2>/dev/null || true
+EOF
+fi
 
 # SMB share for iPad/iPhone (AvPlan flight plan drop folder)
 install -d -m 755 ${ROOTFS_DIR}/etc/samba/smb.conf.d

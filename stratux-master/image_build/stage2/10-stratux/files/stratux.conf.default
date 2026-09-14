@@ -1,5 +1,6 @@
 {
-  "UAT_Enabled": true,
+  "UAT_Enabled": false,
+  "ES_Enabled": true,
   "OGN_Enabled": false,
   "DeveloperMode": false,
   "WiFiMode": 2,
@@ -7,9 +8,22 @@
   "WiFiCountry": "AU",
   "WiFiSSID": "Stratux",
   "WiFiSecurityEnabled": false,
+  "GPS_Enabled": true,
+  "GpsManualConfig": false,
+  "GpsManualDevice": "/dev/serial0",
+  "GpsManualChip": "ublox8",
+  "GpsManualTargetBaud": 115200,
   "WiFiClientNetworks": [
     {
+      "SSID": "Wentworth2020-2G",
+      "Password": "CHANGE_ME"
+    },
+    {
       "SSID": "IdeasMan_iPhone",
+      "Password": "CHANGE_ME"
+    },
+    {
+      "SSID": "IdeasMan_iPad",
       "Password": "CHANGE_ME"
     }
   ]

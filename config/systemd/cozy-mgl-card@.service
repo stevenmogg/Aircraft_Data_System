@@ -1,0 +1,17 @@
+[Unit]
+Description=Cozy MGL SD card sync (%i)
+After=local-fs.target cozy-historian-data.service
+Wants=cozy-historian-data.service
+
+[Service]
+Type=oneshot
+User=root
+# Settle briefly so partition nodes / fstype are ready after insert
+ExecStartPre=/bin/sleep 1
+ExecStart=/cozy-data-system/scripts/mgl_card_sync.sh /dev/%i
+Nice=10
+TimeoutStartSec=300
+StandardOutput=journal
+StandardError=journal
+# Rapid insert/remove is expected
+StartLimitIntervalSec=0

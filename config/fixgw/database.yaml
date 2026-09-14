@@ -1,0 +1,26 @@
+# Cozy copy of the FIX-Gateway database index.
+# Stock key files live in database/*.yaml (mirrored from MakerPlane FIX-Gateway).
+# Cozy source-specific keys are in database/mgl_airtalk.yaml,
+# database/mgl_rdac.yaml, database/mgl_nmea.yaml, and database/mgl_servo.yaml.
+# Historian capture is a subset — see config/historian/historian.yaml.
+
+include:
+- database/variables.yaml
+
+entries:
+- include: database/generic.yaml
+- include: database/ahrs.yaml
+- include: database/com_radio.yaml
+- include: database/engine.yaml
+- include: database/trims.yaml
+- include: database/mavlink.yaml
+- include: database/system.yaml
+- include: database/control.yaml
+- include: database/misc.yaml
+- include: database/tires.yaml
+- include: database/mgl_airtalk.yaml
+- include: database/mgl_rdac.yaml
+- include: database/mgl_nmea.yaml
+- include: database/mgl_servo.yaml
+- include: database/custom.yaml
+- include: database/last.yaml

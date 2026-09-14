@@ -1,0 +1,298 @@
+items:
+# MGL Extreme NMEA 0183 source-specific keys (prefix MGL_NMEA_).
+# Canonical LAT/LONG/GS/TRACK remain Stratux (USB GPS).
+# GGA altitude is stored as feet MSL (converted from metres on ingest).
+
+- key: MGL_NMEA_RAW
+  description: Last NMEA sentence from MGL Extreme
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_GGA_RAW
+  description: Last GGA sentence from MGL Extreme
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_RMC_RAW
+  description: Last RMC sentence from MGL Extreme
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_TALKER
+  description: NMEA talker id (GP, GN, …)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_TYPE
+  description: NMEA sentence type (GGA, RMC, …)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_CSUM_OK
+  description: Last sentence checksum valid
+  type: bool
+  initial: false
+  tol: 2500
+
+- key: MGL_NMEA_TIME
+  description: UTC time of fix (hhmmss.ss)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_DATE
+  description: UTC date (ddmmyy)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_LAT
+  description: MGL NMEA latitude (decimal degrees, +N)
+  type: float
+  min: -90.0
+  max: 90.0
+  units: deg
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_LAT_RAW
+  description: MGL NMEA latitude ddmm.mmmmm
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_NS
+  description: MGL NMEA latitude hemisphere (N/S)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_LONG
+  description: MGL NMEA longitude (decimal degrees, +E)
+  type: float
+  min: -180.0
+  max: 180.0
+  units: deg
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_LONG_RAW
+  description: MGL NMEA longitude dddmm.mmmmm
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_EW
+  description: MGL NMEA longitude hemisphere (E/W)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_QUAL
+  description: GGA fix quality (0 none, 1 GPS, 2 DGPS)
+  type: int
+  min: 0
+  max: 9
+  initial: 0
+  tol: 2500
+
+- key: MGL_NMEA_STATUS
+  description: RMC/GLL status (A valid, V void)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_VALID
+  description: MGL NMEA position valid
+  type: bool
+  initial: false
+  tol: 2500
+
+- key: MGL_NMEA_SATS
+  description: GGA satellites used
+  type: int
+  min: 0
+  max: 32
+  initial: 0
+  tol: 2500
+
+- key: MGL_NMEA_HDOP
+  description: Horizontal dilution of precision
+  type: float
+  min: 0.0
+  max: 99.9
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_ALT
+  description: GGA altitude MSL (feet)
+  type: float
+  min: -1500.0
+  max: 60000.0
+  units: ft
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_ALT_UNIT
+  description: GGA altitude unit
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_GEOID
+  description: GGA geoid separation
+  type: float
+  min: -700.0
+  max: 700.0
+  units: ft
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_GEOID_UNIT
+  description: GGA geoid unit
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_DGPS_AGE
+  description: GGA DGPS age
+  type: float
+  min: 0.0
+  max: 99.9
+  units: s
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_DGPS_ID
+  description: GGA DGPS reference station id
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_GS
+  description: MGL NMEA ground speed
+  type: float
+  min: 0.0
+  max: 999.9
+  units: kt
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_GS_KMH
+  description: VTG ground speed
+  type: float
+  min: 0.0
+  max: 1852.0
+  units: km/h
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_TRACK
+  description: MGL NMEA track over ground (true)
+  type: float
+  min: 0.0
+  max: 360.0
+  units: deg
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_TRACK_MAG
+  description: VTG magnetic track
+  type: float
+  min: 0.0
+  max: 360.0
+  units: deg
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_MAGVAR
+  description: RMC magnetic variation
+  type: float
+  min: 0.0
+  max: 180.0
+  units: deg
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_MAGVAR_EW
+  description: RMC magnetic variation E/W
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_MODE
+  description: NMEA mode (A autonomous, D DGPS, N none)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_NAVSTAT
+  description: RMC nav status (NMEA 4.1)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_GSA_MODE
+  description: GSA selection mode (A/M)
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_GSA_FIX
+  description: GSA fix type (1 none, 2 2D, 3 3D)
+  type: int
+  min: 0
+  max: 3
+  initial: 0
+  tol: 2500
+
+- key: MGL_NMEA_PDOP
+  description: Position dilution of precision
+  type: float
+  min: 0.0
+  max: 99.9
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_VDOP
+  description: Vertical dilution of precision
+  type: float
+  min: 0.0
+  max: 99.9
+  initial: 0.0
+  tol: 2500
+
+- key: MGL_NMEA_SATS_USED
+  description: GSA PRNs used in the solution
+  type: str
+  initial: ""
+  tol: 2500
+
+- key: MGL_NMEA_SATS_VIEW
+  description: GSV satellites in view
+  type: int
+  min: 0
+  max: 32
+  initial: 0
+  tol: 2500
+
+- key: MGL_NMEA_GSV_TOTAL
+  description: GSV total sentence count
+  type: int
+  min: 0
+  max: 9
+  initial: 0
+  tol: 2500
+
+- key: MGL_NMEA_GSV_NUM
+  description: GSV sentence number
+  type: int
+  min: 0
+  max: 9
+  initial: 0
+  tol: 2500

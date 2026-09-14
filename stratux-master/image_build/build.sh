@@ -13,6 +13,15 @@ touch pi-gen/stage3/SKIP_IMAGES pi-gen/stage4/SKIP_IMAGES pi-gen/stage5/SKIP_IMA
 # copy the config file into place
 cp config pi-gen/
 
+# If this Stratux tree lives inside the Cozy repo, bake /cozy-data-system source
+# into the image (venv is still installed after first flash).
+COZY_ROOT="$(cd "$(dirname "$0")/../.." && pwd)"
+if [ -x "${COZY_ROOT}/scripts/sync_cozy_into_stratux_image.sh" ]; then
+	"${COZY_ROOT}/scripts/sync_cozy_into_stratux_image.sh" "${COZY_ROOT}" "$(cd "$(dirname "$0")" && pwd)/stage2/10-stratux"
+else
+	echo "NOTE: Cozy sync script not found; image will only get empty /cozy-data-system dirs"
+fi
+
 # copy the stage2 10-stratux files into place
 rsync -av --delete stage2/10-stratux/ pi-gen/stage2/10-stratux/
 

@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}{{ flight_id }} — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>{{ flight_id }}</h1>
+    <p class="lede"><a href="/flights">← Flights</a> · Manifest and metadata.</p>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Manifest <span class="twisty-meta">JSON</span></summary>
+    <div class="twisty-body">
+      <pre id="manifest" style="margin:0;overflow:auto;white-space:pre-wrap;"></pre>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script>
+fetch('/api/flights/{{ flight_id }}/manifest').then(r=>r.json()).then(d=>{
+  document.getElementById('manifest').textContent = JSON.stringify(d.manifest, null, 2);
+});
+</script>
+{% endblock %}

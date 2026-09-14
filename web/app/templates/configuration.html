@@ -1,0 +1,49 @@
+{% extends "base.html" %}
+{% block title %}Configuration — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>Configuration</h1>
+    <p class="lede">Settings and identity (read-only). Live system state is on Status.</p>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Wi‑Fi uplink <span class="twisty-meta">settings</span></summary>
+    <div class="twisty-body">
+      <p class="muted" id="wifi-note"></p>
+      <div class="inner-card">
+        <h3>Preference order</h3>
+        <ol id="wifi-priority" style="margin:0;"></ol>
+      </div>
+      <div class="inner-card">
+        <h3>Configured client networks</h3>
+        <table class="data" id="wifi-nets">
+          <thead>
+            <tr><th>SSID</th><th>Priority</th><th>Interface</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div class="inner-card">
+        <h3>Stratux AP</h3>
+        <div id="wifi-ap" class="muted">…</div>
+      </div>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Aircraft <span class="twisty-meta">identity</span></summary>
+    <div class="twisty-body">
+      <pre id="aircraft" style="margin:0;white-space:pre-wrap;"></pre>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Historian signals <span class="twisty-meta">logging</span></summary>
+    <div class="twisty-body">
+      <pre id="signals" style="margin:0;white-space:pre-wrap;"></pre>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/configuration.js"></script>
+{% endblock %}

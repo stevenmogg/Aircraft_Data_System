@@ -1,0 +1,36 @@
+# Cozy Aircraft Historian — sampling configuration (Phase 4 / Historian Phase 1)
+#
+# FIX keys listed here must exist in FIX-Gateway (or will be stored as NULL).
+# Column names in SQLite use a fix_ prefix (see schema).
+
+historian:
+  database_path: /cozy-data-system/data/historian/cozy_historian.sqlite
+  aircraft_id: COZ
+  fast_rate_hz: 10
+  slow_rate_hz: 1
+  # Commit batch size (rows)
+  commit_every_frames: 10
+  # Timing overrun threshold for 10 Hz (seconds)
+  sample_tolerance_s: 0.05
+  # Unix socket for daemon Start/Stop (CLI + future web UI)
+  control_socket: /cozy-data-system/data/historian/historian.sock
+
+  fix:
+    host: 127.0.0.1
+    port: 3490
+
+  # Maps FIX key -> historian_10hz column (without requiring engine sensors yet)
+  fast_signals:
+    LAT: fix_lat
+    LONG: fix_long
+    PITCH: fix_pitch
+    ROLL: fix_roll
+    HEAD: fix_head
+    ALT: fix_alt
+    PALT: fix_palt
+    VS: fix_vs
+    ALAT: fix_alat
+    GS: fix_gs
+    TRACK: fix_track
+
+  slow_signals: {}

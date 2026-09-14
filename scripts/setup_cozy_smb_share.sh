@@ -59,12 +59,25 @@ EOF
    fruit:nfs_aces = no
 EOF
   if [ -f "${root}/etc/samba/smb.conf" ]; then
-    sed -i '/^include = \/etc\/samba\/smb.conf.d/d' "${root}/etc/samba/smb.conf"
-    if ! grep -q 'apple-vfs.conf' "${root}/etc/samba/smb.conf"; then
-      sed -i '/^\[global\]/a\
-   include = /etc/samba/smb.conf.d/apple-vfs.conf\
-   include = /etc/samba/smb.conf.d/cozy-data.conf' "${root}/etc/samba/smb.conf"
-    fi
+    # Drop any previous snippet includes (including a broken one-line double include).
+    sed -i '/include = \/etc\/samba\/smb.conf.d\/apple-vfs.conf/d' "${root}/etc/samba/smb.conf"
+    sed -i '/include = \/etc\/samba\/smb.conf.d\/cozy-data.conf/d' "${root}/etc/samba/smb.conf"
+    python3 - "${root}/etc/samba/smb.conf" <<'PY'
+from pathlib import Path
+import sys
+p = Path(sys.argv[1])
+text = p.read_text(encoding="utf-8")
+needle = "[global]"
+idx = text.find(needle)
+if idx < 0:
+    raise SystemExit(f"no [global] in {p}")
+insert_at = idx + len(needle)
+block = (
+    "\ninclude = /etc/samba/smb.conf.d/apple-vfs.conf\n"
+    "include = /etc/samba/smb.conf.d/cozy-data.conf"
+)
+p.write_text(text[:insert_at] + block + text[insert_at:], encoding="utf-8")
+PY
   fi
 }
 
@@ -94,7 +107,22 @@ ensure_runtime_config() {
   fi
 }
 
+ensure_samba_logdir() {
+  # Stratux overlay/tmpfs boots without /var/log/samba; smbd then times out.
+  mkdir -p /var/log/samba /etc/tmpfiles.d /etc/systemd/system/smbd.service.d
+  chmod 755 /var/log/samba
+  cat >/etc/tmpfiles.d/cozy-samba.conf <<'EOF'
+d /var/log/samba 0755 root root -
+EOF
+  cat >/etc/systemd/system/smbd.service.d/logdir.conf <<'EOF'
+[Service]
+ExecStartPre=/bin/mkdir -p /var/log/samba
+EOF
+  systemctl daemon-reload 2>/dev/null || true
+}
+
 start_smbd() {
+  ensure_samba_logdir
   if command -v systemctl >/dev/null 2>&1 && systemctl list-unit-files smbd.service >/dev/null 2>&1; then
     systemctl enable smbd
     systemctl restart smbd

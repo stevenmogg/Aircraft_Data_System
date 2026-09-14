@@ -1,0 +1,22 @@
+[Unit]
+Description=FIX-Gateway (Cozy Aircraft Data System)
+Documentation=https://github.com/makerplane/FIX-Gateway
+After=network-online.target stratux.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+SupplementaryGroups=dialout
+WorkingDirectory=/cozy-data-system
+Environment=HOME=/home/pi
+Environment=PYTHONPATH=/cozy-data-system/fix_gateway_plugins:/cozy-data-system
+ExecStart=/cozy-data-system/venv/bin/fixgw --config-file=/cozy-data-system/config/fixgw/default.yaml
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

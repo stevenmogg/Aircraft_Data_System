@@ -1,0 +1,271 @@
+items:
+# MGL RDAC XF (CAN address 32) — source-specific keys (prefix MGL_RDAC_).
+# Do not write canonical TACH1/EGT/OILT until aircraft channel mapping
+# and analog calibration are known. TC values are compensated °F
+# (thermocouple °C + RDAC_TEMP °C, then converted). Analog channels are 12-bit ADC.
+
+- key: MGL_RDAC_FF1PC
+  description: RDAC fuel-flow 1 pulse count (ID 1)
+  type: int
+  min: 0
+  max: 65535
+  initial: 0
+  tol: 8000
+
+- key: MGL_RDAC_FF1PR
+  description: RDAC fuel-flow 1 pulse ratio (ID 1)
+  type: float
+  min: 0.0
+  max: 1000.0
+  initial: 0.0
+  tol: 8000
+
+- key: MGL_RDAC_FF2PC
+  description: RDAC fuel-flow 2 pulse count (ID 1)
+  type: int
+  min: 0
+  max: 65535
+  initial: 0
+  tol: 8000
+
+- key: MGL_RDAC_FF2PR
+  description: RDAC fuel-flow 2 pulse ratio (ID 1)
+  type: float
+  min: 0.0
+  max: 1000.0
+  initial: 0.0
+  tol: 8000
+
+- key: MGL_RDAC_TC1
+  description: RDAC thermocouple 1 compensated (ID 2)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC2
+  description: RDAC thermocouple 2 compensated (ID 2)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC3
+  description: RDAC thermocouple 3 compensated (ID 2)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC4
+  description: RDAC thermocouple 4 compensated (ID 2)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC5
+  description: RDAC thermocouple 5 compensated (ID 3)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC6
+  description: RDAC thermocouple 6 compensated (ID 3)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC7
+  description: RDAC thermocouple 7 compensated (ID 3)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC8
+  description: RDAC thermocouple 8 compensated (ID 3)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC9
+  description: RDAC thermocouple 9 compensated (ID 4)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC10
+  description: RDAC thermocouple 10 compensated (ID 4)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC11
+  description: RDAC thermocouple 11 compensated (ID 4)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_TC12
+  description: RDAC thermocouple 12 compensated (ID 4)
+  type: float
+  min: -400.0
+  max: 3000.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_OILT_RAW
+  description: RDAC oil temperature ADC (ID 5)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_OILP_RAW
+  description: RDAC oil pressure ADC (ID 5)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_AUX1_RAW
+  description: RDAC AUX1 ADC (ID 5)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_AUX2_RAW
+  description: RDAC AUX2 ADC (ID 5)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_FUELP_RAW
+  description: RDAC fuel pressure ADC (ID 6)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_COOLANT_RAW
+  description: RDAC coolant ADC (ID 6)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_FUELLEVEL1_RAW
+  description: RDAC fuel level 1 ADC (ID 6)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_FUELLEVEL2_RAW
+  description: RDAC fuel level 2 ADC (ID 6)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_TEMP
+  description: RDAC cold-junction temperature (ID 7)
+  type: float
+  min: -60.0
+  max: 320.0
+  units: degF
+  initial: 0.0
+  tol: 2000
+
+- key: MGL_RDAC_SUPPLY_RAW
+  description: RDAC supply voltage raw (ID 7)
+  type: int
+  min: 0
+  max: 65535
+  units: raw
+  initial: 0
+  tol: 2000
+
+- key: MGL_RDAC_RPM1
+  description: RDAC RPM1 (ID 8, 1 pulse/rev)
+  type: int
+  min: 0
+  max: 65535
+  units: RPM
+  initial: 0
+  tol: 600
+
+- key: MGL_RDAC_RPM2
+  description: RDAC RPM2 (ID 8)
+  type: int
+  min: 0
+  max: 65535
+  units: RPM
+  initial: 0
+  tol: 600
+
+- key: MGL_RDAC_MAP_RAW
+  description: RDAC manifold pressure ADC (ID 8)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 600
+
+- key: MGL_RDAC_CURRENT_RAW
+  description: RDAC current ADC (ID 8)
+  type: int
+  min: 0
+  max: 4095
+  units: raw
+  initial: 0
+  tol: 600

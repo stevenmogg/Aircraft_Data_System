@@ -1,0 +1,8 @@
+# Cozy MGL Extreme NMEA 0183 → FIX (GPIO UART / MAX3232, receive-only).
+# USB GPS stays with Stratux. Do not enable GPSD on this port.
+mgl_nmea:
+  load: MGL_NMEA
+  module: cozy_mgl_nmea
+  port: /dev/serial0
+  baud: 19200
+  receive_only: true

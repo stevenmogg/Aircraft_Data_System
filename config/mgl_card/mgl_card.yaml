@@ -1,0 +1,52 @@
+# Cozy MGL SD-card exchange (USB reader)
+#
+# Card root layout (MGL Extreme): ENIGMA.REC, XTFLIGHT.CSV, flight plans.
+# Partition label is often "MGL" but any label is accepted if those files exist
+# (e.g. CHASE2). Cards are auto-mounted only for the sync window, then unmounted;
+# yanking mid-mount is cleared by the release udev hook + stale-mount recovery.
+#
+# Inbox naming (one file each, overwritten on each card sync):
+#   enigma/ENIGMA_LATEST.REC       — awaiting import
+#   enigma/ENIGMA_PROCESSED.REC    — renamed by importer after successful import
+#   xtflight/XTFLIGHT_LATEST.CSV
+#   xtflight/XTFLIGHT_PROCESSED.CSV
+
+mount_point: /media/cozy-mgl
+flight_plans_dir: /cozy-data-system/data/flight-plans
+inbox_enigma: /cozy-data-system/data/mgl-inbox/enigma
+inbox_xtflight: /cozy-data-system/data/mgl-inbox/xtflight
+status_file: /cozy-data-system/data/mgl-inbox/last_sync.json
+
+# Preferred label (also accepted: any VFAT with ENIGMA/XTFLIGHT)
+expected_label: MGL
+
+# Never delete / overwrite these on the card (case-insensitive).
+# WAYPOINT.EWD is merged (not replaced). Navidata.ewd is read-only lookup.
+# *.ert route files are replaced from current AvPlan GPX on each card insert.
+protected_names:
+  - ENIGMA.REC
+  - XTFLIGHT.CSV
+  - SETTINGS.XT
+  - FLTLOG.LOG
+  - WAYPOINT.EWD
+  - Navidata.ewd
+
+# Card files matching these (and not protected) are deleted after conversion.
+# AvPlan GPX stays on the Pi; Extreme routes are written as 8.3 *.ert names.
+flight_plan_extensions:
+  - .fpl
+  - .gpx
+  - .pln
+  - .bin
+  - .csv
+  - .pdf
+  - .txt
+  - .userwaypoints
+
+# Ignore Apple / junk
+ignore_globs:
+  - ".*"
+  - "._*"
+  - ".Spotlight-V100"
+  - ".fseventsd"
+  - "System Volume Information"

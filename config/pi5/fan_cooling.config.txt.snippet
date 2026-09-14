@@ -1,0 +1,25 @@
+# Cozy Pi 5 — onboard FAN header cooling
+#
+# The official Pi 5 / case fan plugs into the board 4-pin FAN connector and is
+# driven by firmware + kernel thermal trips (NOT Stratux fancontrol).
+#
+# Stratux fancontrol PWM's BCM GPIO18 (header pin 12) for a discrete GPIO fan.
+# Do not use it for the Pi 5 case fan — wrong pin / wrong controller.
+
+# Cooling curve (temperatures in millidegrees C, speed 0–255)
+# Slightly earlier than stock defaults for an enclosed avionics case.
+dtparam=fan_temp0=40000
+dtparam=fan_temp0_hyst=5000
+dtparam=fan_temp0_speed=100
+
+dtparam=fan_temp1=50000
+dtparam=fan_temp1_hyst=5000
+dtparam=fan_temp1_speed=150
+
+dtparam=fan_temp2=60000
+dtparam=fan_temp2_hyst=5000
+dtparam=fan_temp2_speed=200
+
+dtparam=fan_temp3=67500
+dtparam=fan_temp3_hyst=5000
+dtparam=fan_temp3_speed=255

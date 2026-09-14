@@ -1,0 +1,8 @@
+# Cozy Stratux → FIX adapter (HTTP /getSituation)
+# AHRS without GPS + GPS ownship when Matek/SAM-M8Q has a fix.
+stratux_http:
+  load: STRATUX
+  module: cozy_stratux_http
+  url: http://127.0.0.1/getSituation
+  interval: 0.1
+  timeout: 1.0

@@ -1,0 +1,104 @@
+[build-system]
+requires = [
+    "setuptools","wheel"
+]
+build-backend = "setuptools.build_meta"
+
+#[tool.setuptools]
+
+[tool.setuptools.dynamic]
+version = {attr = "fixgw.__version__"}
+
+[project]
+name = "fixgw"
+dynamic = ["version"]
+description = "FIX-Gateway: Gateway software for the Flight Information eXchange protocols"
+readme = "README.rst"
+requires-python = ">=3.8, <4"
+authors = [
+    { name = "MakerPlane Open Source Aviation", email = "contact@makerplane.org" },
+]
+keywords = [
+    "aviation",
+    "efis",
+    "makerplane",
+]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Environment :: X11 Applications :: Qt",
+    "Intended Audience :: End Users/Desktop",
+    "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.7",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "python-can>=4.3.1",
+    "python-canfix==0.3.0",
+    "lockfile>=0.12.2",
+    "daemon==1.2",
+    "pyyaml==6.0.2",
+    "pyserial==3.5",
+    "pymavlink==2.4.42",
+    "pynmea2==1.19.0",
+    "numpy>=1.26.4",
+    "tables>=3.9.2",
+    "py-gpsd2==0.1.0",
+    # "PyQt6>=6.6.1",
+    "psutil>=5.9.8",
+    # You cannot install rpi-lgpio and rpi-gpio (aka RPi.GPIO, the library it emulates) 
+    # at the same time, in the same Python environment. Both packages attempt 
+    # to install a module named RPi.GPIO and obviously this will not work.
+    "rpi-lgpio>=0.6",
+    "smbus"
+
+]
+
+[project.optional-dependencies]
+build = [
+    "build==1.2.1",
+]
+qt = [
+    "PyQt6>=6.6.1",
+]
+
+[project.scripts]
+fixgw = "fixgw.server:main"
+fixgwc = "fixgw.client:main"
+
+[project.urls]
+Homepage = "https://makerplane.org/"
+Source = "https://github.com/makerplane/FIX-Gateway"
+
+
+[tool.pytest.ini_options]
+qt_api="pyqt6"
+env = [
+  "QT_QPA_PLATFORM = offscreen:size=1000x1000"
+#  "QT_QPA_PLATFORM = xcb:size=1000,1000"
+]
+filterwarnings = [
+    # I belive this is warning that pyqt needs updated if you update to python 3.12
+    "ignore:sipPyTypeDict.*:DeprecationWarning:.*:",
+    "default"
+]
+addopts = """
+    --cov-report term-missing --cov-branch --cov-report html --cov-report term
+    --cov=fixgw --cov-context=test -vv --strict-markers -ra
+    --ignore=tests/end_to_end/repo
+"""
+
+[tool.coverage.run]
+relative_files = true
+
+[tool.coverage.paths]
+source = [
+    "src/"
+]
+
+[tool.black]
+target-version = ['py310']

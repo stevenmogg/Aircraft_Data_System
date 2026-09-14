@@ -1,0 +1,34 @@
+# Cozy MGL autopilot servo emulator (Plan B — separate plugin).
+# Bank = servo 1 (0x101), pitch = servo 2 (0x111). Identify is ignored.
+# Replies match the Arduino program: DLC 5, voltage 0x80, torque 0x70.
+# Do not enable stock fixgw.plugins.mgl (it can transmit as an RDAC).
+mgl_servo:
+  load: MGL_SERVO
+  module: cozy_mgl_servo
+  interface: socketcan
+  channel: can0
+  bitrate: 250000
+  enabled: true
+  allow_tx: true
+  tx_armed: true
+  command_timeout_ms: 300
+  unsolicited_interval_ms: 100
+  engage_bit: 0
+  reply_dlc: 5
+  servos:
+    roll:
+      enabled: true
+      expected_number: 1
+      servo_number: 1
+      identify_armed: false
+      mode: echo
+      simulated_voltage_v: 17.8
+      simulated_torque: 112
+    pitch:
+      enabled: true
+      expected_number: 2
+      servo_number: 2
+      identify_armed: false
+      mode: echo
+      simulated_voltage_v: 17.8
+      simulated_torque: 112

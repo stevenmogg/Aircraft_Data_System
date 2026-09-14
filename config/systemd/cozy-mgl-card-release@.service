@@ -1,0 +1,13 @@
+[Unit]
+Description=Cozy MGL SD card release / unmount (%i)
+DefaultDependencies=no
+After=local-fs.target
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/cozy-data-system/scripts/mgl_card_sync.sh --release /dev/%i
+TimeoutStartSec=30
+StandardOutput=journal
+StandardError=journal
+StartLimitIntervalSec=0

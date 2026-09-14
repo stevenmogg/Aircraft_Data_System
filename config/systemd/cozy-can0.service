@@ -1,0 +1,15 @@
+[Unit]
+Description=Cozy MCP2515 SocketCAN can0 (listen-only 250 kbit/s)
+After=network-online.target systemd-modules-load.service
+Wants=network-online.target
+# Overlay creates can0 at boot; wait briefly if probe is slow
+ConditionPathExists=/sys/class/net/can0
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/cozy-data-system/scripts/setup_can0.sh --up
+ExecStop=/sbin/ip link set can0 down
+
+[Install]
+WantedBy=multi-user.target

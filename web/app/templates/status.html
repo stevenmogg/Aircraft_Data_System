@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Status — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>Status</h1>
+    <p class="lede">Live system state. Configuration settings are on the Config page.</p>
+    <div class="page-top-body status-line">
+      <span id="badge-overall" class="badge">…</span>
+      <span id="badge-gps" class="badge">GPS …</span>
+      <span id="badge-fix" class="badge">FIX …</span>
+      <span id="badge-hist" class="badge">Historian …</span>
+      <span id="badge-temp" class="badge">Temp …</span>
+      <span id="badge-volt" class="badge">Volts …</span>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Overview <span class="twisty-meta">services</span></summary>
+    <div class="twisty-body">
+      <table class="data" id="svc-table">
+        <thead><tr><th>Service</th><th>Active</th><th>Enabled</th></tr></thead>
+        <tbody><tr><td colspan="3" class="muted">…</td></tr></tbody>
+      </table>
+      <dl class="kv" id="overview-kv" style="margin-top:1rem;"></dl>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>GPS / AHRS <span class="twisty-meta">Stratux</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="gps-kv"></dl>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>FIX Gateway <span class="twisty-meta">bus</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="fix-kv"></dl>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Historian <span class="twisty-meta">recording</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="hist-kv"></dl>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Network <span class="twisty-meta">Wi-Fi / Samba</span></summary>
+    <div class="twisty-body">
+      <table class="data" id="net-table">
+        <thead><tr><th>Interface</th><th>Role</th><th>State</th><th>SSID</th><th>Address</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" id="net-ap" style="margin-top:0.75rem;"></p>
+      <p class="status-line" style="margin-top:1rem; margin-bottom:0.5rem;">
+        <span id="badge-samba" class="badge">Samba …</span>
+      </p>
+      <dl class="kv" id="samba-kv"></dl>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Host / cooling <span class="twisty-meta">Pi / power</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="host-kv"></dl>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>External data <span class="twisty-meta">MGL</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="ext-kv"></dl>
+      <p class="muted">Full inbox detail is on Flights → External Data.</p>
+      <p style="margin-top:0.75rem;"><a href="/debug/mgl/can">MGL CAN</a> · <a href="/debug/mgl/airtalk">MGL AirTalk</a> · <a href="/debug/mgl/gps">MGL GPS</a> · <a href="/debug/mgl/autopilot">MGL AutoPilot</a></p>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/status.js"></script>
+{% endblock %}

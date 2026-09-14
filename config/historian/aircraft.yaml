@@ -1,0 +1,19 @@
+# Default aircraft / configuration seed for Cozy III
+aircraft:
+  aircraft_id: COZ
+  registration: VH-COZ
+  type: Cozy III
+  description: Cozy Aircraft Data System primary airframe
+  notes: ""
+
+configuration:
+  configuration_id: COZ_CFG_001
+  name: Baseline Stage 1
+  description: Initial configuration while Stratux/FIX/AHRS are commissioned
+  valid_from: "2026-08-01"
+  valid_to: null
+  items:
+    - { category: airframe, item: type, value: Cozy III, units: "", notes: "" }
+    - { category: avionics, item: ads_b, value: Stratux, units: "", notes: "Pi 5 Stratux" }
+    - { category: avionics, item: ahrs, value: Stratux AHRSv2, units: "", notes: "" }
+    - { category: avionics, item: data_backbone, value: FIX-Gateway, units: "", notes: "MakerPlane fixgw" }

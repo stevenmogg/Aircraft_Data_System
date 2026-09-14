@@ -1,0 +1,81 @@
+items:
+# MGL Airtalk source-specific keys (prefix MGL_AT_).
+# Canonical PITCH/ROLL/HEAD remain Stratux. Roll is bank as received
+# (positive left on this airframe — not ARINC right-wing-down).
+
+- key: MGL_AT_PITCH
+  description: MGL Airtalk pitch (FF/37 Euler10, + up)
+  type: float
+  min: -90.0
+  max: 90.0
+  units: deg
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_ROLL
+  description: MGL Airtalk bank (FF/37 Euler10, + left)
+  type: float
+  min: -180.0
+  max: 180.0
+  units: deg
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_YAW
+  description: MGL Airtalk AHRS yaw (FF/37, zeros at power-up; not mag heading)
+  type: float
+  min: -360.0
+  max: 720.0
+  units: deg
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_HEAD
+  description: MGL Airtalk magnetic heading (FF/32, 1 deg)
+  type: float
+  min: 0.0
+  max: 359.9
+  units: deg
+  initial: 0.0
+  tol: 500
+
+- key: MGL_AT_HEAD_STATUS
+  description: MGL Airtalk heading status byte (FF/32)
+  type: int
+  min: 0
+  max: 255
+  initial: 0
+  tol: 500
+
+- key: MGL_AT_SLIP
+  description: MGL Airtalk slip (FF/37, + ball to the right)
+  type: float
+  min: -50.0
+  max: 50.0
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_G
+  description: MGL Airtalk normal acceleration (FF/37 fps)
+  type: float
+  min: -10.0
+  max: 30.0
+  units: g
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_TURN
+  description: MGL Airtalk turn rate raw (FF/37, + right; scale TBD)
+  type: float
+  min: -32768.0
+  max: 32767.0
+  initial: 0.0
+  tol: 300
+
+- key: MGL_AT_MISC
+  description: MGL Airtalk SP-4 MISC status byte (FF/37)
+  type: int
+  min: 0
+  max: 255
+  initial: 0
+  tol: 300

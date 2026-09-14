@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+{% block title %}MGL AutoPilot — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>MGL</h1>
+    <p class="lede">Virtual bank (servo 1 / 0x101) and pitch (servo 2 / 0x111) reply like the Arduino: DLC 5, voltage 0x80, torque 0x70. Identify is ignored. The Pi does not move an actuator.</p>
+    {% include "mgl_subnav.html" %}
+    <div class="page-top-body status-line">
+      <span id="badge-mode" class="badge">idle</span>
+      <span id="badge-can" class="badge">can0 …</span>
+      <span id="badge-tx" class="badge">TX …</span>
+      <span id="badge-id" class="badge">identify …</span>
+      <span id="badge-roll-eng" class="badge">roll …</span>
+      <span id="badge-pitch-eng" class="badge">pitch …</span>
+      <button type="button" class="btn danger" id="btn-abort">Exit install</button>
+    </div>
+  </header>
+
+  <section class="card" id="live-response">
+    <h2>Live response</h2>
+    <p class="muted">Positions are 12-bit two’s complement (−2048…2047). Bank right and pitch up are negative from the XTreme. Reported position is commanded + offset, clamped to the installed limits. Offset only changes the Pi reply.</p>
+    <div class="servo-live-grid">
+      <div class="servo-live" data-live-axis="roll">
+        <h3>Bank / Roll <span class="badge live-eng">engage …</span></h3>
+        <div class="servo-readouts">
+          <div>
+            <span class="muted">Commanded (right −)</span>
+            <div class="pos-readout live-cmd">—</div>
+          </div>
+          <div>
+            <span class="muted">Response</span>
+            <div class="pos-readout live-resp">—</div>
+          </div>
+        </div>
+        <dl class="kv live-kv"></dl>
+        <label class="muted" for="offset-roll">Offset (right − / left +)</label>
+        <div class="offset-readout"><span class="live-off">+0</span></div>
+        <input type="range" class="pos-range live-offset" id="offset-roll" min="-2048" max="2047" value="0">
+        <div class="row-actions">
+          <button type="button" data-offset-zero="roll">Offset 0</button>
+        </div>
+      </div>
+      <div class="servo-live" data-live-axis="pitch">
+        <h3>Pitch <span class="badge live-eng">engage …</span></h3>
+        <div class="servo-readouts">
+          <div>
+            <span class="muted">Commanded (up −)</span>
+            <div class="pos-readout live-cmd">—</div>
+          </div>
+          <div>
+            <span class="muted">Response</span>
+            <div class="pos-readout live-resp">—</div>
+          </div>
+        </div>
+        <dl class="kv live-kv"></dl>
+        <label class="muted" for="offset-pitch">Offset (up − / down +)</label>
+        <div class="offset-readout"><span class="live-off">+0</span></div>
+        <input type="range" class="pos-range live-offset" id="offset-pitch" min="-2048" max="2047" value="0">
+        <div class="row-actions">
+          <button type="button" data-offset-zero="pitch">Offset 0</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="card wizard-step" data-step="idle">
+    <h2>Choose axis</h2>
+    <p class="muted">One servo at a time. XTreme: Autopilot not engaged, no flight active, only this axis “connected”.</p>
+    <div class="row-actions">
+      <button type="button" class="primary" data-axis="roll">Bank / Roll</button>
+      <button type="button" class="primary" data-axis="pitch">Pitch</button>
+    </div>
+  </section>
+
+  <section class="card wizard-step" data-step="preflight" hidden>
+    <h2>Preflight — <span class="axis-label">—</span></h2>
+    <ul class="file-list">
+      <li>Aircraft stationary. No physical MGL servo on the bus.</li>
+      <li>On the XTreme: BANK or PITCH SERVO enabled; AP off; no flight.</li>
+      <li><code>can0</code> must not be listen-only or the Pi cannot reply.</li>
+    </ul>
+    <dl class="kv" id="preflight-kv"></dl>
+    <div class="row-actions">
+      <button type="button" id="btn-can-tx">Enable CAN TX</button>
+      <button type="button" class="primary" id="btn-identify">Start identify</button>
+    </div>
+  </section>
+
+  <section class="card wizard-step" data-step="identify" hidden>
+    <h2>Identify — <span class="axis-label">—</span></h2>
+    <p class="step-hint" id="identify-hint"></p>
+    <p class="step-warn" id="identify-warn" hidden></p>
+    <dl class="kv" id="identify-kv"></dl>
+    <p class="muted" id="identify-frames"></p>
+    <div class="row-actions">
+      <button type="button" class="primary" id="btn-limits">Continue to limits</button>
+      <button type="button" id="btn-retry-id">Retry identify</button>
+    </div>
+  </section>
+
+  <section class="card wizard-step" data-step="limits" hidden>
+    <h2>Limits — <span class="axis-label">—</span></h2>
+    <p class="muted">The XTreme copies the <strong>current position</strong> the servo reports. Counts are 12-bit two’s complement (−2048…2047). Bank right and pitch up are negative. Set that number here, then on the XTreme select the matching limit function.</p>
+    <div class="pos-readout"><span id="pos-value">0</span><span class="unit">signed</span></div>
+    <input type="range" id="pos-range" class="pos-range" min="-2048" max="2047" value="0">
+    <div class="row-actions">
+      <button type="button" data-preset="-2048">−2048</button>
+      <button type="button" data-preset="-1">−1</button>
+      <button type="button" data-preset="0">0</button>
+      <button type="button" data-preset="1">+1</button>
+      <button type="button" data-preset="2047">+2047</button>
+    </div>
+    <div class="row-actions">
+      <button type="button" class="primary" id="btn-lim-a">Capture A</button>
+      <button type="button" class="primary" id="btn-lim-b">Capture B</button>
+    </div>
+    <dl class="kv" id="limits-kv"></dl>
+    <div class="row-actions">
+      <button type="button" class="primary" id="btn-done">Finish</button>
+    </div>
+  </section>
+
+  <section class="card wizard-step" data-step="done" hidden>
+    <h2>Done — <span class="axis-label">—</span></h2>
+    <p class="muted">Install mode is still armed until you exit. Restore listen-only after you are finished with both axes.</p>
+    <dl class="kv" id="done-kv"></dl>
+    <div class="row-actions">
+      <button type="button" id="btn-listen">Restore listen-only</button>
+      <button type="button" class="danger" id="btn-exit">Exit install</button>
+      <button type="button" id="btn-other">Install the other axis</button>
+    </div>
+  </section>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/mgl_autopilot.js?v={{ static_v('js/mgl_autopilot.js') }}"></script>
+{% endblock %}

@@ -35,3 +35,26 @@ core_freq=450
 arm_freq=900
 
 arm_64bit=1
+
+# --- cozy pi5 fan cooling (begin) ---
+# Onboard FAN header thermal trips (not Stratux GPIO fancontrol).
+# Temps in millidegrees C; speed 0-255. Enclosed avionics curve.
+dtparam=fan_temp0=40000
+dtparam=fan_temp0_hyst=5000
+dtparam=fan_temp0_speed=100
+dtparam=fan_temp1=50000
+dtparam=fan_temp1_hyst=5000
+dtparam=fan_temp1_speed=150
+dtparam=fan_temp2=60000
+dtparam=fan_temp2_hyst=5000
+dtparam=fan_temp2_speed=200
+dtparam=fan_temp3=67500
+dtparam=fan_temp3_hyst=5000
+dtparam=fan_temp3_speed=255
+# --- cozy pi5 fan cooling (end) ---
+
+# --- cozy mcp2515 can0 (begin) ---
+# MCP2515 on SPI0 CE0. INT GPIO25, 8 MHz crystal, SPI 500 kHz (this harness).
+dtparam=spi=on
+dtoverlay=mcp2515-can0,oscillator=8000000,interrupt=25,spimaxfrequency=500000
+# --- cozy mcp2515 can0 (end) ---

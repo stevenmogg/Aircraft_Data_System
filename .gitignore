@@ -3,3 +3,24 @@
 
 # Local cloned/build trees used for image builds
 stratux-v2.0-pre4/
+stratux-master/image_build/pi-gen/
+
+# Generated into the Stratux stage by scripts/sync_cozy_into_stratux_image.sh
+stratux-master/image_build/stage2/10-stratux/files/cozy-payload/*
+!stratux-master/image_build/stage2/10-stratux/files/cozy-payload/README.txt
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+*.egg-info/
+
+# Editor / local clutter
+*.code-workspace
+.DS_Store
+
+# Image-build leftover info files and unrelated books at repo root
+/*.info
+/Grokking_AI_Algorithms_Second_Edition.pdf
+/Machine_Learning_Bookcamp.pdf
+/Time_Series_Forecasting_in_Python.pdf

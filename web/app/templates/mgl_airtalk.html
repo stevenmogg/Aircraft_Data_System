@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}MGL AirTalk — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>MGL</h1>
+    <p class="lede">FIX-Gateway owns the Nano USB and publishes <code>MGL_AT_*</code>. Watch / observed / interface below follow that FIX feed. Raw USB hex is only used if <code>COZY_AIRTALK_WEB_SERIAL=1</code> (stop <code>fixgateway</code> first).</p>
+    {% include "mgl_subnav.html" %}
+    <div class="page-top-body status-line">
+      <span id="badge-if" class="badge">USB …</span>
+      <span id="badge-fix" class="badge">FIX …</span>
+      <span id="badge-rx" class="badge">RX …</span>
+      <span id="badge-ok" class="badge">frames …</span>
+      <span id="badge-ws" class="badge">WS …</span>
+      <label class="hold"><input type="checkbox" id="chk-hold"> Hold</label>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>FIX <span class="twisty-meta">MGL_AT_*</span></summary>
+    <div class="twisty-body">
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>Pitch <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-pitch">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Roll <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-roll">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Heading <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-head">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Yaw <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-yaw">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Slip <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-slip">—</span><span class="unit"></span></div>
+        </div>
+        <div class="card">
+          <h2>G <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-at-g">—</span><span class="unit">g</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Watch <span class="twisty-meta" id="watch-meta">FIX live</span></summary>
+    <div class="twisty-body" id="watch-cards">
+      <p class="muted">Waiting for FIX…</p>
+    </div>
+  </details>
+
+  <details class="twisty" open>
+    <summary>Observed <span class="twisty-meta" id="msg-meta">FIX keys</span></summary>
+    <div class="twisty-body table-wrap">
+      <table class="data" id="msg-table">
+        <thead id="msg-head">
+          <tr>
+            <th>Dest</th>
+            <th>Label</th>
+            <th>Type</th>
+            <th>Len</th>
+            <th>Hz</th>
+            <th>Age ms</th>
+            <th>Count</th>
+            <th>Check</th>
+            <th>Payload</th>
+          </tr>
+        </thead>
+        <tbody><tr><td colspan="9" class="muted">Waiting for frames…</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Interface <span class="twisty-meta" id="if-meta">FIX plugin</span></summary>
+    <div class="twisty-body">
+      <dl class="kv" id="at-kv"></dl>
+      <p class="muted" id="at-err"></p>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Recent frames <span class="twisty-meta" id="log-meta">log</span></summary>
+    <div class="twisty-body">
+      <pre class="log" id="recent-log"></pre>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/mgl_airtalk.js?v={{ static_v('js/mgl_airtalk.js') }}"></script>
+{% endblock %}

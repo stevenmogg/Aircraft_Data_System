@@ -1,0 +1,121 @@
+# MGL CAN decode / display map (commissioning + FIX plugin).
+# Used by Cozy Web /debug/mgl/can and fix_gateway_plugins/cozy_mgl_can.
+#
+# MGL ID: device_address = (can_id >> 4) & 0x7F, message_id = can_id & 0x0F
+# Field types: le_i16, le_u16, le_i32, u8, raw_hex
+# Optional: scale, offset_add (value = raw * scale + offset_add)
+# fix_key must be a real FIX database key (no dots).
+
+channel: can0
+bitrate: 250000
+
+devices:
+  1:
+    name: EFIS
+    family: host/EFIS
+  16:
+    name: servo1-bank
+    family: servo
+  17:
+    name: servo2-pitch
+    family: servo
+  32:
+    name: RDAC
+    family: RDAC
+  33:
+    name: RDAC2
+    family: RDAC
+  40:
+    name: SP-7
+    family: AHRS/SP-7
+  36:
+    name: compass
+    family: compass
+
+messages:
+  # Host → servos: Identify / Set Servo Number (CAN ID 0x010)
+  - device: 1
+    msg: 0
+    fields:
+      - { name: MAGIC0, units: "", type: u8, offset: 0 }
+      - { name: MAGIC1, units: "", type: u8, offset: 1 }
+      - { name: SERVO_NUM, units: "", type: u8, offset: 2 }
+      - { name: SERVO_XOR, units: "", type: u8, offset: 3 }
+
+  # Host → servos: Set Position (CAN ID 0x011)
+  - device: 1
+    msg: 1
+    fields:
+      - { name: SERVO_NUM, units: "", type: u8, offset: 0 }
+      - { name: OPTIONS, units: "", type: u8, offset: 1 }
+      - { name: TARGET, units: "", type: le_u16, offset: 2 }
+
+  # RDAC ID 1 — fuel-flow pulse info (~4 s)
+  - device: 32
+    msg: 1
+    fields:
+      - { name: FF1PC, fix_key: MGL_RDAC_FF1PC, units: count, type: le_u16, offset: 0 }
+      - { name: FF1PR, fix_key: MGL_RDAC_FF1PR, units: "", type: le_u16, offset: 2, scale: 0.1 }
+      - { name: FF2PC, fix_key: MGL_RDAC_FF2PC, units: count, type: le_u16, offset: 4 }
+      - { name: FF2PR, fix_key: MGL_RDAC_FF2PR, units: "", type: le_u16, offset: 6, scale: 0.1 }
+
+  # RDAC ID 2 — TC1..TC4 (wire °C vs cold junction; FIX plugin stores compensated °F)
+  - device: 32
+    msg: 2
+    fields:
+      - { name: TC1, fix_key: MGL_RDAC_TC1, units: degC, type: le_i16, offset: 0 }
+      - { name: TC2, fix_key: MGL_RDAC_TC2, units: degC, type: le_i16, offset: 2 }
+      - { name: TC3, fix_key: MGL_RDAC_TC3, units: degC, type: le_i16, offset: 4 }
+      - { name: TC4, fix_key: MGL_RDAC_TC4, units: degC, type: le_i16, offset: 6 }
+
+  # RDAC ID 3 — TC5..TC8 (wire °C vs cold junction; FIX stores compensated °F)
+  - device: 32
+    msg: 3
+    fields:
+      - { name: TC5, fix_key: MGL_RDAC_TC5, units: degC, type: le_i16, offset: 0 }
+      - { name: TC6, fix_key: MGL_RDAC_TC6, units: degC, type: le_i16, offset: 2 }
+      - { name: TC7, fix_key: MGL_RDAC_TC7, units: degC, type: le_i16, offset: 4 }
+      - { name: TC8, fix_key: MGL_RDAC_TC8, units: degC, type: le_i16, offset: 6 }
+
+  # RDAC ID 4 — TC9..TC12 (wire °C vs cold junction; FIX stores compensated °F)
+  - device: 32
+    msg: 4
+    fields:
+      - { name: TC9, fix_key: MGL_RDAC_TC9, units: degC, type: le_i16, offset: 0 }
+      - { name: TC10, fix_key: MGL_RDAC_TC10, units: degC, type: le_i16, offset: 2 }
+      - { name: TC11, fix_key: MGL_RDAC_TC11, units: degC, type: le_i16, offset: 4 }
+      - { name: TC12, fix_key: MGL_RDAC_TC12, units: degC, type: le_i16, offset: 6 }
+
+  # RDAC ID 5 — OILT OILP AUX1 AUX2 (12-bit ADC in 16-bit LE words)
+  - device: 32
+    msg: 5
+    fields:
+      - { name: OILT_RAW, fix_key: MGL_RDAC_OILT_RAW, units: raw, type: le_u16, offset: 0 }
+      - { name: OILP_RAW, fix_key: MGL_RDAC_OILP_RAW, units: raw, type: le_u16, offset: 2 }
+      - { name: AUX1_RAW, fix_key: MGL_RDAC_AUX1_RAW, units: raw, type: le_u16, offset: 4 }
+      - { name: AUX2_RAW, fix_key: MGL_RDAC_AUX2_RAW, units: raw, type: le_u16, offset: 6 }
+
+  # RDAC ID 6 — FUELP COOLANT FUELLEVEL1/2
+  - device: 32
+    msg: 6
+    fields:
+      - { name: FUELP_RAW, fix_key: MGL_RDAC_FUELP_RAW, units: raw, type: le_u16, offset: 0 }
+      - { name: COOLANT_RAW, fix_key: MGL_RDAC_COOLANT_RAW, units: raw, type: le_u16, offset: 2 }
+      - { name: FUELLEVEL1_RAW, fix_key: MGL_RDAC_FUELLEVEL1_RAW, units: raw, type: le_u16, offset: 4 }
+      - { name: FUELLEVEL2_RAW, fix_key: MGL_RDAC_FUELLEVEL2_RAW, units: raw, type: le_u16, offset: 6 }
+
+  # RDAC ID 7 — RDAC cold-junction °C on the wire; FIX stores °F (DLC 4)
+  - device: 32
+    msg: 7
+    fields:
+      - { name: RDAC_TEMP, fix_key: MGL_RDAC_TEMP, units: degC, type: le_i16, offset: 0 }
+      - { name: SUPPLY_RAW, fix_key: MGL_RDAC_SUPPLY_RAW, units: raw, type: le_u16, offset: 2 }
+
+  # RDAC ID 8 — RPM1 RPM2 MAP CURRENT
+  - device: 32
+    msg: 8
+    fields:
+      - { name: RPM1, fix_key: MGL_RDAC_RPM1, units: rpm, type: le_u16, offset: 0 }
+      - { name: RPM2, fix_key: MGL_RDAC_RPM2, units: rpm, type: le_u16, offset: 2 }
+      - { name: MAP_RAW, fix_key: MGL_RDAC_MAP_RAW, units: raw, type: le_u16, offset: 4 }
+      - { name: CURRENT_RAW, fix_key: MGL_RDAC_CURRENT_RAW, units: raw, type: le_u16, offset: 6 }

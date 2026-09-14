@@ -156,7 +156,9 @@ Related templates/files:
 - `debian/wpa_supplicant_wlan1.conf.template`
 - `debian/stratux.conf.default` / `image_build/.../files/stratux.conf.default`
 
-Hotspot policy: primary phone SSID is enabled in templates; optional iPad fallback is commented out.
+Hotspot policy: client SSIDs are listed in templates; **PSKs in git are `CHANGE_ME`**. Fill passwords on the Pi after flash.
+
+Cozy application source is copied into `/cozy-data-system` at image build (`scripts/sync_cozy_into_stratux_image.sh`, invoked from `image_build/build.sh`). Python venv is still installed after first boot.
 
 ---
 

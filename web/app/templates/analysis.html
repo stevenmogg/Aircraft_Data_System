@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Analysis — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>Analysis</h1>
+    <p class="lede">Inspect recorded parameters for a selected flight.</p>
+    <div class="page-top-body row-actions" style="margin:0;">
+      <label class="muted">Flight
+        <select id="flight-select" style="min-height:52px;margin-left:0.5rem;background:#101820;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0 0.5rem;"></select>
+      </label>
+      <button type="button" class="primary" id="btn-plot">Plot pitch/roll</button>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Plot <span class="twisty-meta">pitch / roll</span></summary>
+    <div class="twisty-body">
+      <p id="analysis-msg" class="muted"></p>
+      <canvas id="chart" width="1000" height="360" style="width:100%;height:auto;background:#101820;border-radius:8px;"></canvas>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Export <span class="twisty-meta">CSV</span></summary>
+    <div class="twisty-body">
+      <p class="muted">Download the selected flight as CSV for offline review.</p>
+      <div class="row-actions" style="margin-top:0;">
+        <a class="btn" id="btn-export" href="#">Export CSV</a>
+      </div>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/analysis.js"></script>
+{% endblock %}

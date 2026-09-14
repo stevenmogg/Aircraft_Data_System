@@ -180,7 +180,7 @@ NAT/forwarding hooks rely on iptables binaries.
 
 ### Change
 
-Primary hotspot block enabled with Stage 1 credentials; optional iPad fallback commented out.
+`WiFiClientNetworks` in `stratux.conf.default` lists three uplink clients (home `Wentworth2020-2G`, `IdeasMan_iPhone`, `IdeasMan_iPad`) with **`CHANGE_ME` passwords in git**. Put real PSKs only on the live Pi. Stratux regenerates `/etc/wpa_supplicant/wpa_supplicant.conf` from that list in AP+Client mode — static wpa files alone are not enough.
 `01-run.sh` installs wpa files, interfaces, and both `/opt/stratux/cfg/stratux.conf.default` and `/boot/firmware/stratux.conf`.
 
 ### Why
@@ -218,6 +218,81 @@ This targets HDMI panels. SPI/DPI TFTs need a different `dtoverlay` and are not 
 
 ---
 
+## 3.8 Matek SAM-M8Q GPS (GPIO UART)
+
+### Files
+
+- Live: `/boot/firmware/stratux.conf` (`GpsManualConfig`, `ublox8`, `/dev/serial0`)
+- Templates: `debian/stratux.conf.default`, `image_build/.../stratux.conf.default`
+- Doc: [gps_matek_sam_m8q.md](gps_matek_sam_m8q.md)
+
+### Change
+
+Enable Stratux-owned GPS on the primary UART (pins 8/10). Matek compass lines (DA/CL) are **not connected**; they could share AHRS I²C (QMC5883L `0x0D` vs ICM-20948 `0x68` / BMP `0x76`) if software is added later. See [gps_matek_sam_m8q.md](gps_matek_sam_m8q.md).
+
+### Why
+
+Ownship position for Stratux / FIX / Historian without a USB GPS dongle.
+
+---
+
+## 3.9 Pi 5 onboard FAN header cooling
+
+### Files
+
+- Live: `/boot/firmware/config.txt` (`dtparam=fan_temp0`…`fan_temp3_*`)
+- Template: `image_build/stage2/10-stratux/files/config.txt`
+- Script: `scripts/setup_pi5_fan.sh`
+- Doc: [pi5_fan_cooling.md](pi5_fan_cooling.md)
+
+### Change
+
+Use firmware thermal trips for the case FAN connector. Keep Stratux `fancontrol` (BCM18 GPIO PWM) **disabled**.
+
+### Why
+
+Correct controller for the Pi 5 board fan; enclosed avionics cooling curve.
+
+---
+
+## 3.10 MCP2515 CAN (`can0`)
+
+### Files
+
+- Live / image: `image_build/stage2/10-stratux/files/config.txt`
+- Snippet: `config/pi5/mcp2515.config.txt.snippet`
+- Bring-up: `scripts/setup_can0.sh`, `config/systemd/cozy-can0.service`
+- Doc: [mgl_can_install.md](mgl_can_install.md)
+
+### Change
+
+Enable `dtoverlay=mcp2515-can0,...,spimaxfrequency=500000` at image build. Default SPI clock does not probe this harness.
+
+### Why
+
+RDAC ingest and the servo emulator need `can0` from first boot of a new card.
+
+---
+
+## 3.11 Cozy `/cozy-data-system` payload
+
+### Files
+
+- `scripts/sync_cozy_into_stratux_image.sh`
+- `image_build/build.sh` (calls the sync when the Cozy repo is the parent)
+- `image_build/stage2/10-stratux/01-run.sh` (rsyncs `files/cozy-payload/` into the rootfs)
+- Persist on a running unit: `scripts/persist_cozy_to_robase.sh`
+
+### Change
+
+Bake web, historian, plugins, config, scripts, systemd, and udev into the Stratux image. Python **venv** is still created after flash (`setup_fix_gateway.sh`, `setup_cozy_web.sh`). Wi‑Fi client PSKs in git templates are `CHANGE_ME`.
+
+### Why
+
+A new SD card should carry the Cozy source, not empty directories. Live overlay tmpfs must not be the only copy.
+
+---
+
 ## 4. Re-apply procedure on a future Stratux release
 
 When upgrading to a future upstream Stratux version:
@@ -225,10 +300,11 @@ When upgrading to a future upstream Stratux version:
 1. Clone new upstream release/tag.
 2. Re-apply customizations in this order:
    - `interfaces` and `interfaces.template` (eth0 static, AP+Client passthrough, optional wlan1)
-   - `wpa_supplicant.conf` / `wpa_supplicant_wlan1` files
-   - `stratux.conf.default` (WiFiMode 2, passthrough, client networks)
-   - `01-run.sh` package/install additions (including boot `stratux.conf` and 480x320 `video=` cmdline)
-   - `config.txt` (`disable_fw_kms_setup=1`)
+   - `wpa_supplicant.conf` / `wpa_supplicant_wlan1` files (`CHANGE_ME` in git; real PSKs only on the Pi)
+   - `stratux.conf.default` (WiFiMode 2, passthrough, client SSIDs, `GpsManualConfig: false`, ES on / UAT off)
+   - `01-run.sh` package/install additions (Cozy payload, boot `stratux.conf`, 480x320 `video=` cmdline)
+   - `config.txt` (fan trips, MCP2515 overlay, `disable_fw_kms_setup=1`)
+   - `scripts/sync_cozy_into_stratux_image.sh` so `/cozy-data-system` is not empty
    - `Makefile` default-config copy
 3. Validate no upstream logic conflict in Wi-Fi mode sections.
 4. Build image from no-space path.

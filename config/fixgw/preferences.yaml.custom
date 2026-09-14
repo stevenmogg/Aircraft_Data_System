@@ -1,0 +1,51 @@
+# Cozy Aircraft Data System — FIX-Gateway preferences
+# Overrides preferences.yaml defaults for Stage 1 Phase 2/3.
+
+includes:
+  QUORUM_CONFIG: connections/quorum.yaml
+  # HTTP adapter (not stock GDL90): Stratux withholds GDL90 AHRS until GPS is valid.
+  STRATUX_CONFIG: connections/stratux_http.yaml
+  MGL_AIRTALK_CONFIG: connections/mgl_airtalk.yaml
+  MGL_CAN_CONFIG: connections/mgl_can.yaml
+  MGL_NMEA_CONFIG: connections/mgl_nmea.yaml
+  MGL_SERVO_CONFIG: connections/mgl_servo.yaml
+
+enabled:
+  QUORUM: false
+  DATA_RECORDER: false
+  NETFIX: true
+  COMMAND: false
+  FLIGHT_GEAR: false
+  XPLANE: false
+  CANFIX: false
+  SYSTEM: true
+  ANNUNCIATE: true
+  RPI_BNO055: false
+  RPI_BMP085: false
+  RPI_VIRTUALWIRE: false
+  RPI_BARO: false
+  RPI_BUTTONS: false
+  MCP3008: false
+  RAIS: false
+  COMPUTE: true
+  DIMMER: false
+  GRAND_RAPIDS_EIS: false
+  STRATUX: true
+  MGL_AIRTALK: true
+  MGL_CAN: true
+  MGL_NMEA: true
+  MGL_SERVO: true
+  MAVLINK: false
+  IFLY: false
+  MEGASQUIRT: false
+  MGL: false
+  X728: false
+  MGL_SERIAL: false
+  SHADIN: false
+  # GPIO UART /dev/serial0 is MGL Extreme NMEA (cozy_mgl_nmea). USB GPS is Stratux.
+  # Do not enable GPSD (would fight both).
+  GPSD: false
+  STROM_PI: false
+  DYNON: false
+  DEMO: false
+  RTL_433: false

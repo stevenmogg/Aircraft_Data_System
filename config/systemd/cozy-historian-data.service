@@ -1,0 +1,14 @@
+[Unit]
+Description=Cozy Historian durable data bind-mount (robase)
+DefaultDependencies=no
+After=local-fs.target
+Before=fixgateway.service multi-user.target
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/cozy-data-system/scripts/mount_historian_data.sh
+ExecStop=/bin/umount /cozy-data-system/data/historian
+
+[Install]
+WantedBy=multi-user.target

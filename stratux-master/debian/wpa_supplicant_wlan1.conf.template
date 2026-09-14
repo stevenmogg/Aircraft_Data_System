@@ -2,7 +2,16 @@ ctrl_interface=DIR=/run/wpa_supplicant GROUP=netdev
 update_config=1
 country=AU
 
-# Optional USB Wi-Fi dongle uplink (backup to onboard wlan0 client)
+# USB Wi-Fi dongle uplink (wlan1). Higher priority = preferred.
+# Put live PSKs on the Pi only — never commit real passwords.
+
+network={
+    ssid="Wentworth2020-2G"
+    psk="CHANGE_ME"
+    key_mgmt=WPA-PSK
+    priority=30
+}
+
 network={
     ssid="IdeasMan_iPhone"
     psk="CHANGE_ME"
@@ -10,10 +19,9 @@ network={
     priority=20
 }
 
-# Optional iPad hotspot fallback (disabled by default).
-# network={
-#     ssid="IdeasMan_iPad"
-#     psk="CHANGE_ME"
-#     key_mgmt=WPA-PSK
-#     priority=10
-# }
+network={
+    ssid="IdeasMan_iPad"
+    psk="CHANGE_ME"
+    key_mgmt=WPA-PSK
+    priority=10
+}

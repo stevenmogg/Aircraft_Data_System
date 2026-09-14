@@ -1,0 +1,220 @@
+{% extends "base.html" %}
+{% block title %}Live — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>Live</h1>
+    <p class="lede">Recording controls and live FIX attitudes and engine (RDAC).</p>
+    <div class="page-top-body status-line">
+      <span id="ws-badge" class="badge bad">WS …</span>
+      <span id="fix-badge" class="badge">FIX …</span>
+      <span id="hist-badge" class="badge">Historian …</span>
+      <span id="flight-id" class="muted">Flight: —</span>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Instruments <span class="twisty-meta">primary</span></summary>
+    <div class="twisty-body">
+      <div class="row-actions" style="margin-top:0;">
+        <button type="button" class="primary" id="btn-start">Start recording</button>
+        <button type="button" class="danger" id="btn-stop" disabled>Stop</button>
+      </div>
+      <p id="action-msg" class="muted"></p>
+      <p class="instrument-source">MGL Airtalk</p>
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>Pitch <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-pitch">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Roll <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-roll">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Heading <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-head">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Yaw <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-yaw">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Slip <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-slip">—</span><span class="unit"></span></div>
+        </div>
+        <div class="card">
+          <h2>G <span class="src-tag">MGL</span></h2>
+          <div class="value"><span id="v-mgl-g">—</span><span class="unit">g</span></div>
+        </div>
+      </div>
+      <p class="instrument-source">MGL RDAC</p>
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>RPM 1 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-rpm1">—</span><span class="unit">rpm</span></div>
+        </div>
+        <div class="card">
+          <h2>RPM 2 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-rpm2">—</span><span class="unit">rpm</span></div>
+        </div>
+        <div class="card">
+          <h2>MAP <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-map">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Current <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-curr">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>RDAC temp <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-temp">—</span><span class="unit">°F</span></div>
+        </div>
+        <div class="card">
+          <h2>Oil T <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-oilt">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Oil P <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-oilp">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Fuel P <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-fuelp">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Coolant <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-cool">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Fuel 1 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-fuel1">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Fuel 2 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-fuel2">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Aux 1 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-aux1">—</span><span class="unit">raw</span></div>
+        </div>
+        <div class="card">
+          <h2>Aux 2 <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-aux2">—</span><span class="unit">raw</span></div>
+        </div>
+      </div>
+      <p class="instrument-source">MGL RDAC thermocouples</p>
+      <div class="grid instrument-block">
+        {% for i in range(1, 13) %}
+        <div class="card">
+          <h2>TC {{ i }} <span class="src-tag">RDAC</span></h2>
+          <div class="value"><span id="v-rdac-tc{{ i }}">—</span><span class="unit">°F</span></div>
+        </div>
+        {% endfor %}
+      </div>
+      <p class="instrument-source">MGL Extreme NMEA</p>
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>Lat <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-lat">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Lon <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-lon">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Alt MSL <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-alt">—</span><span class="unit">ft</span></div>
+        </div>
+        <div class="card">
+          <h2>GS <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-gs">—</span><span class="unit">kt</span></div>
+        </div>
+        <div class="card">
+          <h2>Track <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-track">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Qual / sats <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-qual">—</span><span class="unit"></span></div>
+        </div>
+        <div class="card">
+          <h2>HDOP <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-hdop">—</span><span class="unit"></span></div>
+        </div>
+        <div class="card">
+          <h2>UTC <span class="src-tag">NMEA</span></h2>
+          <div class="value"><span id="v-nmea-time">—</span><span class="unit"></span></div>
+        </div>
+      </div>
+      <p class="instrument-source">Stratux GPS</p>
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>Lat <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-lat">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Lon <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-lon">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Alt MSL <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-alt">—</span><span class="unit">ft</span></div>
+        </div>
+        <div class="card">
+          <h2>GS <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-gs">—</span><span class="unit">kt</span></div>
+        </div>
+        <div class="card">
+          <h2>Track <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-track">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Qual / sats <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-sx-qual">—</span><span class="unit"></span></div>
+        </div>
+      </div>
+      <p class="instrument-source">Stratux AHRS</p>
+      <div class="grid instrument-block">
+        <div class="card">
+          <h2>Pitch <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-pitch">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Roll <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-roll">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Heading <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-head">—</span><span class="unit">°</span></div>
+        </div>
+        <div class="card">
+          <h2>Alt (baro) <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-alt">—</span><span class="unit">ft</span></div>
+        </div>
+        <div class="card">
+          <h2>VS <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-vs">—</span><span class="unit">fpm</span></div>
+        </div>
+        <div class="card">
+          <h2>GS <span class="src-tag">Stratux</span></h2>
+          <div class="value"><span id="v-gs">—</span><span class="unit">kt</span></div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>Marks <span class="twisty-meta">events</span></summary>
+    <div class="twisty-body">
+      <div class="row-actions" style="margin-top:0;">
+        <button type="button" id="btn-mark">MARK</button>
+        <input id="mark-label" type="text" placeholder="Optional mark label"
+               style="min-height:52px;flex:1;min-width:180px;padding:0 0.75rem;border-radius:10px;border:1px solid var(--border);background:#101820;color:var(--text);font-size:1rem;">
+      </div>
+      <p class="muted">Marks are stored against the active flight when recording.</p>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/live.js?v={{ static_v('js/live.js') }}"></script>
+{% endblock %}

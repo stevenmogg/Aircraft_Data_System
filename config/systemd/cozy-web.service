@@ -1,0 +1,21 @@
+[Unit]
+Description=Cozy Aircraft Web UI (FastAPI)
+After=network-online.target fixgateway.service cozy-historian.service cozy-historian-data.service
+Wants=network-online.target fixgateway.service cozy-historian.service
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+SupplementaryGroups=dialout
+WorkingDirectory=/cozy-data-system
+Environment=HOME=/home/pi
+Environment=PYTHONPATH=/cozy-data-system
+ExecStart=/cozy-data-system/venv/bin/uvicorn web.app.main:app --host 0.0.0.0 --port 8080 --workers 1
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

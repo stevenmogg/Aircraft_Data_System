@@ -1,0 +1,165 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no" ?>
+<gpx xmlns="http://www.topografix.com/GPX/1/1" xmlns:gpxx="http://www.garmin.com/xmlschemas/GpxExtensions/v3" xmlns:gpxtpx="http://www.garmin.com/xmlschemas/TrackPointExtension/v1" creator="AvPlan" version="1.1" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.topografix.com/GPX/1/1 http://www.topografix.com/GPX/1/1/gpx.xsd http://www.garmin.com/xmlschemas/GpxExtensions/v3 http://www.garmin.com/xmlschemas/GpxExtensionsv3.xsd http://www.garmin.com/xmlschemas/TrackPointExtension/v1 http://www.garmin.com/xmlschemas/TrackPointExtensionv1.xsd">
+<metadata>	<link href="http://www.avsoft.com.au">
+<text>AvSoft</text>
+</link><time>2026-09-11T07:55:42Z</time>
+</metadata><wpt lon="144.977336" lat="-37.816959">
+<ele>0</ele>
+<name>Home</name>
+<desc>Home</desc>
+<type>U</type>
+</wpt>
+<wpt lon="144.958333" lat="-37.808333">
+<ele>0</ele>
+<name>MCTY</name>
+<desc>MELBOURNE CBD</desc>
+<type>TSP</type>
+</wpt>
+<wpt lon="144.993889" lat="-37.795278">
+<ele>0</ele>
+<name>FWO</name>
+<desc>FREEWAY OVERPASS</desc>
+<type>VFC</type>
+</wpt>
+<wpt lon="144.975000" lat="-37.855556">
+<ele>0</ele>
+<name>APL</name>
+<desc>ALBERT PARK LAKE</desc>
+<type>VFA</type>
+</wpt>
+<rte>
+<name>Home to APL</name>
+<number>1</number>
+<extensions>
+<AvPlanLegDetails xmlns="avplan">
+<src>Home</src>
+<desc>APL</desc>
+<AvPlanHoldingTime>0</AvPlanHoldingTime>
+<AvPlanPOB>1</AvPlanPOB>
+<AvPlanTaxiTime>0</AvPlanTaxiTime>
+<AvPlanTaxiFuel>0</AvPlanTaxiFuel>
+<AvPlanApproachFuel>0</AvPlanApproachFuel>
+<AvPlanApproachTime>0</AvPlanApproachTime>
+<AvPlanStatus18></AvPlanStatus18>
+<AvPlanRTOW>0</AvPlanRTOW>
+<AvPlanRLW>0</AvPlanRLW>
+<AvPlanGroundRunning>0</AvPlanGroundRunning>
+<AvPlanDiscretionaryFuel>0</AvPlanDiscretionaryFuel>
+<AvPlanLoiterFuel>0.000000</AvPlanLoiterFuel>
+<AvPlanLoiterTime>0</AvPlanLoiterTime>
+<AvPlanAlternateHoldingFuel>0.000000</AvPlanAlternateHoldingFuel>
+<AvPlanAlternateHoldingtime>0</AvPlanAlternateHoldingtime>
+<AvPlanAlternateApproachFuel>0.000000</AvPlanAlternateApproachFuel>
+<AvPlanAlternateApproachTime>0</AvPlanAlternateApproachTime>
+<AvPlanLoading>
+<AvPlanLoad>
+<AvPlanLoadID>0</AvPlanLoadID>
+<AvPlanLoadValue>80.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>1</AvPlanLoadID>
+<AvPlanLoadValue>0.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>2</AvPlanLoadID>
+<AvPlanLoadValue>10.000000</AvPlanLoadValue>
+</AvPlanLoad><AvPlanLoad>
+<AvPlanLoadID>3</AvPlanLoadID>
+<AvPlanLoadValue>0.000000</AvPlanLoadValue>
+</AvPlanLoad></AvPlanLoading>
+<AvPlanFuelLoading>
+<AvPlanFuelLoad>
+<AvPlanFuelLoadID>0</AvPlanFuelLoadID>
+<AvPlanFuelLoadValue>120.000000</AvPlanFuelLoadValue>
+</AvPlanFuelLoad></AvPlanFuelLoading>
+</AvPlanLegDetails>
+</extensions>
+<rtept lat="-37.816959" lon="144.977336">	<name>Home</name>
+	<type>U</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>0</AvPlanAltitude>
+	<desc>Home</desc>
+	<magvar>11.72035121917725</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>178.2572</AvPlanTrack>
+<AvPlanDistance>0</AvPlanDistance>
+<AvPlanDistanceRemain>6.622204303741455</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.808333" lon="144.958333">	<name>MCTY</name>
+	<type>TSP</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>467</AvPlanAltitude>
+	<desc>MELBOURNE CBD</desc>
+	<magvar>11.7581</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>288.1168</AvPlanTrack>
+<AvPlanDistance>1.040266156196594</AvPlanDistance>
+<AvPlanDistanceRemain>5.58193826675415</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.795278" lon="144.993889">	<name>FWO</name>
+	<type>VFC</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>467</AvPlanAltitude>
+	<desc>FREEWAY OVERPASS</desc>
+	<magvar>11.7688</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>53.31712</AvPlanTrack>
+<AvPlanDistance>1.861853241920471</AvPlanDistance>
+<AvPlanDistanceRemain>3.720085144042969</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept><rtept lat="-37.855556" lon="144.975000">	<name>APL</name>
+	<type>VFA</type>
+<extensions>
+<AvPlanWaypointDetails xmlns="avplan">
+<AvPlanAltitude>467</AvPlanAltitude>
+	<desc>ALBERT PARK LAKE</desc>
+	<magvar>11.7808</magvar>
+<AvPlanDelay>0</AvPlanDelay>
+<AvPlanAlternate>0</AvPlanAlternate>
+<AvPlanLSALT>0</AvPlanLSALT>
+<AvPlanSegRules>VFR</AvPlanSegRules>
+<AvPlanTrack>182.1159</AvPlanTrack>
+<AvPlanDistance>3.72008490562439</AvPlanDistance>
+<AvPlanDistanceRemain>2.384185791015625e-07</AvPlanDistanceRemain>
+<AvPlanUserTAS>0</AvPlanUserTAS>
+<AvPlanActualFOB>0</AvPlanActualFOB>
+</AvPlanWaypointDetails>
+</extensions>
+</rtept></rte>
+<trk>
+	<name>Track Log</name>
+	<trkseg>
+</trkseg>
+</trk>
+<extensions>
+<AvPlanPlanDetails  xmlns="avplan">
+<AvPlanRules>VFR</AvPlanRules>
+<AvPlanOrigin>Home</AvPlanOrigin>
+<AvPlanDestination>APL</AvPlanDestination>
+<AvPlanSARLeg>0</AvPlanSARLeg>
+<AvPlanRemarks></AvPlanRemarks>
+<AvPlanAircraft>COZ</AvPlanAircraft>
+<AvPlanTrip>A23CF5CA-8C02-4832-89A8-C9D88C5821C9</AvPlanTrip>
+<AvPlanPerformanceProfile>55%</AvPlanPerformanceProfile>
+</AvPlanPlanDetails>
+</extensions>
+</gpx>

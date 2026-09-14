@@ -51,7 +51,12 @@ ssh stratux 'ls -la /cozy-data-system/data/flight-plans/'
 
 Or mount SMB from Finder: **Go → Connect to Server** → `smb://192.168.50.2/cozy-data` (wired management IP).
 
+## MGL SD card
+
+When an MGL card is inserted (or the flight-plans folder changes while a card is present), each GPX is converted to an Extreme `.ert` route and written to the card. See [mgl_card_install.md](mgl_card_install.md).
+
 ## Related docs
 
 - [cozy_aircraft_data_system_stage1.md](cozy_aircraft_data_system_stage1.md)
 - [stratux_local_customizations.md](stratux_local_customizations.md)
+- [mgl_card_install.md](mgl_card_install.md)

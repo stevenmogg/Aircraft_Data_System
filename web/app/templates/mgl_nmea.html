@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block title %}MGL GPS — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>MGL</h1>
+    <p class="lede">Extreme NMEA 0183 on the GPIO UART. FIX-Gateway owns <code>/dev/serial0</code> and publishes <code>MGL_NMEA_*</code>; this page reads those keys and splits GGA / RMC traffic.</p>
+    {% include "mgl_subnav.html" %}
+    <div class="page-top-body status-line">
+      <span id="badge-if" class="badge">FIX …</span>
+      <span id="badge-rx" class="badge">RX …</span>
+      <span id="badge-ws" class="badge">WS …</span>
+      <label class="hold"><input type="checkbox" id="chk-hold"> Hold</label>
+    </div>
+  </header>
+
+  <div class="nmea-split">
+    <section class="card nmea-col" id="col-gga">
+      <h2>GGA <span class="src-tag">fix</span></h2>
+      <p class="muted" id="gga-meta">waiting…</p>
+      <pre class="nmea-raw" id="gga-raw">—</pre>
+      <dl class="kv" id="gga-kv"></dl>
+      <h3 class="nmea-log-title">Traffic</h3>
+      <pre class="log nmea-log" id="gga-log"></pre>
+    </section>
+    <section class="card nmea-col" id="col-rmc">
+      <h2>RMC <span class="src-tag">nav</span></h2>
+      <p class="muted" id="rmc-meta">waiting…</p>
+      <pre class="nmea-raw" id="rmc-raw">—</pre>
+      <dl class="kv" id="rmc-kv"></dl>
+      <h3 class="nmea-log-title">Traffic</h3>
+      <pre class="log nmea-log" id="rmc-log"></pre>
+    </section>
+  </div>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/mgl_nmea.js"></script>
+{% endblock %}

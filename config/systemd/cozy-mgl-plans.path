@@ -1,0 +1,15 @@
+[Unit]
+Description=Watch Cozy flight-plans folder for MGL card push
+After=local-fs.target
+
+[Path]
+PathChanged=/cozy-data-system/data/flight-plans
+# Also catch new files created in place
+PathModified=/cozy-data-system/data/flight-plans
+Unit=cozy-mgl-plans.service
+MakeDirectory=true
+TriggerLimitIntervalSec=10
+TriggerLimitBurst=5
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,15 @@
+[Unit]
+Description=Cozy MGL — push flight plans when folder changes (if card present)
+After=local-fs.target cozy-historian-data.service
+StartLimitIntervalSec=0
+
+[Service]
+Type=oneshot
+User=root
+# Debounce SMB / AvPlan multi-write saves
+ExecStartPre=/bin/sleep 2
+ExecStart=/cozy-data-system/scripts/mgl_card_sync.sh --if-card
+Nice=10
+TimeoutStartSec=300
+StandardOutput=journal
+StandardError=journal

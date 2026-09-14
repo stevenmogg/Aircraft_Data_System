@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Flights — Cozy{% endblock %}
+{% block content %}
+  <header class="page-top">
+    <h1>Flights</h1>
+    <p class="lede">Recorded flights and external data exchange.</p>
+    <div class="page-top-body status-line">
+      <span id="flights-count" class="badge">Flights …</span>
+      <span id="ext-badge" class="badge">External …</span>
+    </div>
+  </header>
+
+  <details class="twisty" open>
+    <summary>Flight list <span class="twisty-meta" id="flights-meta">catalogue</span></summary>
+    <div class="twisty-body">
+      <table class="data" id="flights-table">
+        <thead><tr><th>Flight</th><th>Date</th><th>Start</th><th>Frames</th></tr></thead>
+        <tbody id="flights-body"><tr><td colspan="4" class="muted">…</td></tr></tbody>
+      </table>
+    </div>
+  </details>
+
+  <details class="twisty">
+    <summary>External Data <span class="twisty-meta">MGL card</span></summary>
+    <div class="twisty-body" id="external-data">
+      <p class="muted">Loading external data status…</p>
+    </div>
+  </details>
+{% endblock %}
+{% block scripts %}
+<script src="/static/js/flights.js"></script>
+{% endblock %}

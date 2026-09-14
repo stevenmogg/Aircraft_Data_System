@@ -1,0 +1,23 @@
+[Unit]
+Description=Cozy Aircraft Historian daemon (idle until start-flight)
+Documentation=file:/cozy-data-system/config/historian/historian.yaml
+After=network-online.target fixgateway.service cozy-historian-data.service
+Wants=network-online.target
+Requires=cozy-historian-data.service
+Wants=fixgateway.service
+
+[Service]
+Type=simple
+User=pi
+Group=pi
+WorkingDirectory=/cozy-data-system
+Environment=HOME=/home/pi
+Environment=PYTHONPATH=/cozy-data-system
+ExecStart=/cozy-data-system/venv/bin/python -m historian --config=/cozy-data-system/config/historian/historian.yaml --aircraft-config=/cozy-data-system/config/historian/aircraft.yaml daemon
+Restart=always
+RestartSec=3
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>{% block title %}Cozy{% endblock %}</title>
+  <link rel="stylesheet" href="/static/css/cozy.css?v={{ static_v('css/cozy.css') }}">
+  <script src="/static/vendor/htmx.min.js" defer></script>
+  {% block head %}{% endblock %}
+</head>
+<body>
+  <nav class="topnav">
+    <div class="brand">COZY</div>
+    <a href="/live" class="{% if active == 'live' %}active{% endif %}">Live</a>
+    <a href="/flights" class="{% if active == 'flights' %}active{% endif %}">Flights</a>
+    <a href="/status" class="{% if active == 'status' %}active{% endif %}">Status</a>
+    <a href="/debug/mgl/can" class="{% if active == 'mgl' %}active{% endif %}">MGL</a>
+    <a href="/configuration" class="{% if active == 'configuration' %}active{% endif %}">Config</a>
+    <a href="/analysis" class="{% if active == 'analysis' %}active{% endif %}">Analysis</a>
+  </nav>
+  <main>
+    {% block content %}{% endblock %}
+  </main>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

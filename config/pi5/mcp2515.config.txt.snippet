@@ -1,0 +1,12 @@
+# Cozy Pi 5 — MCP2515 SocketCAN (can0)
+#
+# Do NOT enable until the kernel probe succeeds (see doco/mgl_can_install.md).
+# A failed probe delays boot (~1s) and still leaves can0 missing.
+#
+# mcp2515-can0 = SPI0 CE0 (GPIO8 / pin 24), INT GPIO25 (pin 22), 5 V VCC
+# See doco/mgl_can_install.md for the harness colour table.
+# Do not use GPIO4 (sc16is752), GPIO14/15 (GPS UART), GPIO2/3 (AHRS I2C).
+
+dtparam=spi=on
+# Live aircraft harness (probe succeeded with SPI 500 kHz):
+dtoverlay=mcp2515-can0,oscillator=8000000,interrupt=25,spimaxfrequency=500000

@@ -1,0 +1,8 @@
+# Cozy MGL Airtalk → FIX adapter (Nano 33 BLE USB dump)
+# Receive-only: never transmit onto the Airtalk bus.
+mgl_airtalk:
+  load: MGL_AIRTALK
+  module: cozy_mgl_airtalk
+  port: /dev/serial/by-id/usb-Arduino_Nano_33_BLE_FD3737723CBA566C-if00
+  baud: 115200
+  receive_only: true

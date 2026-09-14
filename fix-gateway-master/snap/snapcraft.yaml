@@ -1,0 +1,225 @@
+name: fixgateway
+adopt-info: fixgateway
+grade: stable
+license: GPL-2.0+
+summary: makerplane FIX gateway server
+description: |
+    A service that collects and distributes avionics data.  FiX is short for "Flight information eXchange" and is a CAN-Aerospace derived protocol specific to experimental aviation needs.
+
+    This snap requires enabling experimental.user-daemons features:
+    sudo snap set system experimental.user-daemons=true
+    
+    Release Notes:
+    * Bug fixes
+    * Added support for Garmin GNX 375
+    * Enabled client GUI using fixgateway.client --gui
+      The GUI is not stable but usable
+
+    Many new plugins that need your help testing:
+    * rtl_433, collect data from wirelss sensors such as TPMS
+    * dynon, collects AHRS data from Dynon D10/D100
+    * gpsd, obtains GPS data from gpsd network daemon
+    * mgl_serial RS-232 protocol, currently lacks custom configuration
+    * shadin protocol, only supports fuel related messagse from FC-10 fuel computr
+    * strom_pi UPS monitoring
+    * Flight Data Recoder
+    * Garmin GNX 375
+    * Replay FDR data from point in time
+    * Mavlink plugin for AHRS/GPS data
+    * Megasquirt ECU Plugin
+    * iFLY plugin, collects waypoints sent by iFLY EFB
+    * quorum plugin, negotiate a leader when running multiple gateways
+    * improvements to canfix plugin
+    * new functions added to compute plugin
+    * MGL plugin, import data from an RDAC or export data as an emulated RDAC
+
+    Planned enhancements for future release:
+    * Add support for MGL V16 COM radio
+
+
+issues: https://github.com/makerplane/FIX-Gateway/issues
+donation: https://www.paypal.com/donate/?hosted_button_id=VGHHNUG3LRPYL
+source-code: https://github.com/makerplane/FIX-Gateway
+website: https://makerplane.org/
+
+platforms:
+  arm64:
+  amd64:
+
+base: core24
+confinement: strict
+
+layout:
+  /usr/share/X11/locale:
+    symlink: $SNAP/gpu-2404/X11/locale
+  /usr/share/X11/xkb:
+    bind: $SNAP/usr/share/X11/xkb
+  /etc/fonts:
+    bind: $SNAP/etc/fonts
+  /usr/share/fonts:
+    bind: $SNAP/usr/share/fonts
+
+parts:
+  extras:
+    source: ./extras
+    plugin: dump
+
+  fixgateway:
+    plugin: python
+    source: .
+    override-build: |
+      craftctl default
+      craftctl set version=$(python3 src/fixgw/version.py)
+      echo "Fixing RPATH for ELF binaries..."
+      find $SNAPCRAFT_PART_INSTALL -type f \( -name "*.so*" -o -perm -111 \) -exec sh -c '
+        if file "$1" | grep -q "ELF"; then
+          echo "Patching RPATH for $1"
+          patchelf --set-rpath "$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR" "$1"
+        fi
+      ' sh {} \;
+
+    stage-packages:
+      - patchelf
+      - libxcb-cursor0
+      - libarchive13t64
+      - python3.12-minimal
+      - libpython3.12-minimal
+      - libpython3.12-stdlib
+      - python3-venv
+      - python3-minimal
+      - python3-pkg-resources
+      - python3-lxml
+      - python3-psutil
+      - python3-pyqt6
+      - libblas3
+      - liblapack3
+      - python3-packaging
+      - gcc
+      - g++
+      - pkg-config
+      - bzip2
+      - lzop
+      - xkb-data
+      - x11-xkb-utils
+      - locales-all
+      - libxkbcommon0
+      - fonts-dejavu-core
+      - fonts-dejavu-extra
+      - libopenblas0
+      - libhdf5-103-1t64
+#      - librtlsdr2
+#      - libusb-1.0-0
+    build-environment:
+      - PARTS_PYTHON_INTERPRETER: python3.12
+#      - PIP_VERBOSE: 3
+      - PARTS_PYTHON_VENV_ARGS: --system-site-packages
+      - PIP_NO_UPGRADE: "1"
+    build-packages:
+      - file
+      - execstack
+      - libc6-dev
+      - cmake
+      - build-essential
+      - libblas-dev
+      - liblapack-dev
+      - libopenblas-dev
+      - python3-dev
+      - libhdf5-dev
+
+# Remove exec stack bit from files causing manual review
+    override-prime: |
+      set -eu
+      craftctl default
+      for f in  usr/lib/arm-linux-gnueabihf/openblas-pthread/libopenblas_armv6p-r0.3.26.so; do
+        if [ -f $f ]; then
+          execstack -c $f
+        fi
+      done
+
+  rtl-433:
+    plugin: cmake
+#    source: https://github.com/merbanan/rtl_433.git
+    source: https://github.com/e100/rtl_433.git
+#    source-tag: '24.10'
+    source-tag: 'gm_tpms'
+    source-depth: 1
+    source-type: git
+    build-packages:
+      - file
+      - build-essential
+      - cmake
+      - librtlsdr-dev
+      - libusb-1.0-0-dev
+      - pkg-config
+      - git
+      - libc6-dev
+    stage-packages:
+      - librtlsdr2
+      - libusb-1.0-0
+      - patchelf
+    cmake-parameters:
+      - -DCMAKE_INSTALL_PREFIX=/usr
+    build-attributes:
+      - enable-patchelf
+    override-build: |
+      snapcraftctl build
+      # Ensure correct RPATH (use libc6 from core24)
+      patchelf --set-rpath "/snap/core24/current/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR" $SNAPCRAFT_PART_INSTALL/usr/bin/rtl_433
+      echo "Fixing RPATH for ELF binaries..."
+      find $SNAPCRAFT_PART_INSTALL -type f \( -name "*.so*" -o -perm -111 \) -exec sh -c '
+        if file "$1" | grep -q "ELF"; then
+          echo "Patching RPATH for $1"
+          patchelf --set-rpath "$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR" "$1"
+        fi
+      ' sh {} \;
+    override-prime: |
+      set -eu
+      craftctl default
+      # Ensure libc6 is removed (use core24's libc6 instead)
+      rm -rf $SNAPCRAFT_PRIME/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libc.so.*
+      rm -rf $SNAPCRAFT_PRIME/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/libc.so.*
+apps:
+  rtl-433:
+    command: usr/bin/rtl_433
+    plugs:
+      - network
+      - network-bind
+      - raw-usb
+  daemon:
+    command: bin/fixgw
+    daemon: simple
+    daemon-scope: user
+    # Woud be nice to also support options: https://snapcraft.io/docs/adding-snap-configuration
+    restart-condition: always
+    plugs: [ home, network-bind, network, can-bus, serial-port, i2c, spi, raw-usb]
+    environment:
+      PATH: $SNAP/bin:$SNAP/usr/bin:$SNAP/usr/local/bin:$PATH
+      PYTHONPATH: $SNAP/lib/python3.12/site-packages:$SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lapack;$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/blas
+
+  server:
+    command: bin/fixgw
+    plugs: [ home, network-bind, network, can-bus, serial-port, i2c, spi, raw-usb]
+    environment:
+      PATH: $SNAP/bin:$SNAP/usr/bin:$SNAP/usr/local/bin:$PATH
+      PYTHONPATH: $SNAP/lib/python3.12/site-packages:$SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
+      LD_LIBRARY_PATH: $LD_LIBRARY_PATH:$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/lapack;$SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/blas
+
+  client:
+    command: bin/fixgwc
+    plugs: 
+      - network
+      - desktop
+      - desktop-legacy
+      - wayland
+      - x11
+      - home
+
+    environment:
+      PATH: $SNAP/bin:$SNAP/usr/bin:$SNAP/usr/local/bin:$PATH
+      PYTHONPATH: $SNAP/lib/python3.12/site-packages:$SNAP/usr/lib/python3/dist-packages:$PYTHONPATH
+      QT_PLUGIN_PATH: $SNAP/usr/lib/$CRAFT_ARCH_TRIPLET_BUILD_FOR/qt6/plugins/
+      QT_QPA_PLATFORM: xcb
+      XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+      QT_XKB_CONFIG_ROOT: $SNAP/usr/share/X11/xkb
+      QT_NO_SESSION_MANAGER: 1

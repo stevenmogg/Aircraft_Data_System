@@ -13,7 +13,7 @@ This document captures how we develop the Cozy Aircraft Data System against a **
 |--------|--------|
 | **Source of truth** | Git repository and working tree on the Mac (this project folder). |
 | **Application code** | Edited locally; reviewed, tested, and versioned on the Mac where practical. |
-| **Pi** | Runtime target for Stratux, future FIX-Gateway, services, and [cockpit Wi‑Fi / AP role](cozy_aircraft_data_system_stage1.md#cockpit-network) (Stage 1). |
+| **Pi** | Runtime target for Stratux, FIX-Gateway, Historian, Web UI, and [cockpit Wi‑Fi / AP role](cozy_aircraft_data_system_stage1.md#cockpit-network). |
 | **Delivery** | Sync or copy to the Pi using SSH-based tools (e.g. `rsync`, `scp`, or `git pull` on the Pi from a remote). |
 
 **Rationale:** Keeps a normal desktop development flow (Cursor, linters, git) and avoids editing production paths directly as the default habit.
@@ -56,7 +56,17 @@ Inspect files, journal logs, and validate services; paste relevant output into t
 - SSH enabled on the Pi and reachable from the Mac (same LAN, Ethernet, USB gadget, or other path you use).
 - Prefer **SSH keys** (`ssh-keygen`, `ssh-copy-id`) over password-only login for day-to-day use.
 
-Optional: add a `Host` block in `~/.ssh/config` (e.g. alias `stratux-pi`) so commands stay short and consistent.
+Optional: SSH aliases in `~/.ssh/config`:
+
+| Alias | Address | When |
+|-------|---------|------|
+| `stratux` | `192.168.50.2` | Management Ethernet |
+| `stratux-wifi` | `10.0.0.41` | Home Wi‑Fi (DHCP **reservation**) |
+
+```bash
+ssh stratux '…'        # eth0
+ssh stratux-wifi '…'   # wlan0 home LAN
+```
 
 ### 3.2 Small helper scripts on the Mac (optional)
 
@@ -80,9 +90,15 @@ These are machine-specific; keep them in notes or your shell profile, not necess
 
 | Item | Your value |
 |------|------------|
-| Pi SSH user | e.g. `pi` or image default |
-| Pi hostname or IP | e.g. `stratux-pi` or `192.168.x.x` |
-| Deploy path on Pi | e.g. `/home/<user>/cozy-data-system` (align with [Stage 1 software tree](cozy_aircraft_data_system_stage1.md#software-structure) when created) |
+| Pi SSH user | `pi` |
+| Management Ethernet | `192.168.50.2` (`ssh stratux`) |
+| Home Wi‑Fi (reserved) | `10.0.0.41` (`ssh stratux-wifi` / `stratux.local`) |
+| Cockpit Stratux AP | `192.168.10.1` |
+| Deploy path on Pi | `/cozy-data-system` |
+
+**Persist to SD (robase):** after rsync to the live tree, run `sudo /cozy-data-system/scripts/persist_cozy_to_robase.sh` so overlay tmpfs is not the only copy. `overlayctl unlock` often reports busy; this image already mounts `/overlay/robase` read-write.
+
+New Stratux images bake the Cozy source via `scripts/sync_cozy_into_stratux_image.sh` (see [stratux_build_and_imaging.md](stratux_build_and_imaging.md)).
 
 ---
 
