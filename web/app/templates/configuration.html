@@ -40,7 +40,15 @@
   <details class="twisty">
     <summary>Historian signals <span class="twisty-meta">logging</span></summary>
     <div class="twisty-body">
-      <pre id="signals" style="margin:0;white-space:pre-wrap;"></pre>
+      <p class="muted" id="signals-summary"></p>
+      <div class="inner-card" style="overflow:auto;max-height:28rem;">
+        <table class="data" id="signals-table">
+          <thead>
+            <tr><th>FIX key</th><th>Column</th><th>Units</th><th>Type</th><th>Hz</th><th>Min</th><th>Max</th><th>Source</th><th>Description</th></tr>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
     </div>
   </details>
 {% endblock %}

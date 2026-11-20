@@ -18,6 +18,10 @@ __pycache__/
 # Editor / local clutter
 *.code-workspace
 .DS_Store
+doco/diagrams/.$*.bkp
+
+# Browser captures contain session cookies and must stay off the remote
+research/*.har
 
 # Image-build leftover info files and unrelated books at repo root
 /*.info

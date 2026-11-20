@@ -3,7 +3,7 @@
 The Nano is a receive-only tap (no TX onto Airtalk). This plugin is the sole
 owner of that USB CDC port. It parses Nano `hex=` lines, decodes FF/32 heading
 and FF/37 Euler10 attitude, and writes source-specific MGL_AT_* keys.
-Canonical PITCH/ROLL/HEAD remain Stratux-owned.
+Canonical STRX_PITCH/STRX_ROLL/STRX_HEAD remain Stratux-owned.
 """
 
 from __future__ import annotations

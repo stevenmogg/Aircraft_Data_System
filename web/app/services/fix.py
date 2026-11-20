@@ -9,7 +9,13 @@ from typing import Any
 def fix_status(
     host: str = "127.0.0.1",
     port: int = 3490,
-    sample_keys: tuple[str, ...] = ("PITCH", "ROLL", "LAT", "LONG", "GS"),
+    sample_keys: tuple[str, ...] = (
+        "STRX_PITCH",
+        "STRX_ROLL",
+        "STRX_LAT",
+        "STRX_LONG",
+        "STRX_GS",
+    ),
 ) -> dict[str, Any]:
     reachable = False
     try:
@@ -27,9 +33,13 @@ def fix_status(
             client.connect(list(sample_keys))
             for key in sample_keys:
                 try:
-                    samples[key.lower()] = client.read_one(key).value
+                    value = client.read_one(key).value
                 except Exception:
-                    samples[key.lower()] = None
+                    value = None
+                samples[key.lower()] = value
+                short = key.lower()
+                if short.startswith("strx_"):
+                    samples[short[5:]] = value
             client.disconnect()
         except Exception as e:
             return {

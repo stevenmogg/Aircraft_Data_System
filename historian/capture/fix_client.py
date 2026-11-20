@@ -14,7 +14,7 @@ log = logging.getLogger("historian.fix")
 @dataclass
 class FixSample:
     key: str
-    value: float | None
+    value: float | str | int | None
     flags: str  # subset of a,o,b,f,s
     raw: str | None = None
 

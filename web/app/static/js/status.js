@@ -29,6 +29,21 @@
     return (n / (1024 * 1024 * 1024)).toFixed(2) + " GB";
   }
 
+  function fmtRate(bps) {
+    if (bps == null || bps === "") return "—";
+    const n = Number(bps);
+    if (!Number.isFinite(n)) return "—";
+    if (n < 1024) return n.toFixed(0) + " B/s";
+    if (n < 1024 * 1024) return (n / 1024).toFixed(1) + " KB/s";
+    return (n / (1024 * 1024)).toFixed(2) + " MB/s";
+  }
+
+  function fmtPct(n) {
+    if (n == null || n === "") return null;
+    const v = Number(n);
+    return Number.isFinite(v) ? v.toFixed(1) + " %" : null;
+  }
+
   function kv(el, rows) {
     el.innerHTML = rows
       .map(
@@ -215,9 +230,72 @@
     ]);
 
     const disk = sys.disk || {};
+    const cpu = sys.cpu || {};
+    const net = (sys.network && sys.network.interfaces) || [];
     const yn = (v) => (v == null ? null : v ? "yes" : "no");
-    kv(document.getElementById("host-kv"), [
+    const hostRows = [
+      [
+        "CPU",
+        cpu.percent != null
+          ? fmtPct(cpu.percent) +
+            (cpu.nproc != null ? " · " + cpu.nproc + " cores" : "")
+          : null,
+      ],
+      [
+        "CPU user / sys / iowait",
+        cpu.user_pct != null
+          ? [cpu.user_pct, cpu.system_pct, cpu.iowait_pct]
+              .map((x) => Number(x).toFixed(1))
+              .join(" / ") + " %"
+          : null,
+      ],
+      [
+        "Load avg",
+        (sys.loadavg || []).map((x) => Number(x).toFixed(2)).join(" / ") || null,
+      ],
       ["CPU temp", sys.cpu_temp_c != null ? sys.cpu_temp_c.toFixed(1) + " °C" : null],
+    ];
+    const volumes = disk.volumes && disk.volumes.length ? disk.volumes : disk.path ? [disk] : [];
+    volumes.forEach((vol) => {
+      const label =
+        vol.path === "/cozy-data-system/data/historian"
+          ? "Disk historian"
+          : vol.path === "/"
+            ? "Disk root"
+            : "Disk " + vol.path;
+      hostRows.push([
+        label,
+        vol.used_pct != null || vol.free_bytes != null
+          ? (fmtPct(vol.used_pct) || "—") +
+            " used · " +
+            fmtBytes(vol.free_bytes) +
+            " free / " +
+            fmtBytes(vol.total_bytes)
+          : null,
+      ]);
+    });
+    const io = disk.io || [];
+    if (io.length) {
+      io.forEach((dsk) => {
+        hostRows.push([
+          "Disk I/O " + dsk.name,
+          fmtRate(dsk.read_bps) + " read · " + fmtRate(dsk.write_bps) + " write",
+        ]);
+      });
+    } else {
+      hostRows.push(["Disk I/O", null]);
+    }
+    if (net.length) {
+      net.forEach((iface) => {
+        hostRows.push([
+          "Net " + iface.iface,
+          fmtRate(iface.rx_bps) + " rx · " + fmtRate(iface.tx_bps) + " tx",
+        ]);
+      });
+    } else {
+      hostRows.push(["Network I/O", null]);
+    }
+    hostRows.push(
       [
         "EXT5V",
         power.ext5v_v != null ? power.ext5v_v.toFixed(2) + " V" : null,
@@ -243,18 +321,16 @@
       ["Undervoltage now", yn(power.undervoltage_now)],
       ["Undervoltage this boot", yn(power.undervoltage_occurred)],
       ["Throttled now", yn(power.throttled_now)],
-      ["Fan state",
+      [
+        "Fan state",
         fan.cur_state != null
           ? fan.cur_state + " / " + fan.max_state + " (" + (fan.cooling_type || "fan") + ")"
-          : null],
+          : null,
+      ],
       ["Fan RPM", fan.rpm],
-      ["Fan PWM", fan.pwm],
-      ["Disk free",
-        disk.free_bytes != null
-          ? fmtBytes(disk.free_bytes) + " / " + fmtBytes(disk.total_bytes)
-          : null],
-      ["Disk path", disk.path],
-    ]);
+      ["Fan PWM", fan.pwm]
+    );
+    kv(document.getElementById("host-kv"), hostRows);
 
     const sync = ext.last_sync || {};
     const routes = sync.routes || {};

@@ -645,7 +645,7 @@ captured and the current FIX-Gateway database conventions are inspected.
 
 Do **not** hard-code final key names from this document.
 
-Provisional mapping (source-specific; canonical `PITCH`/`ROLL`/`HEAD` stay Stratux):
+Provisional mapping (source-specific; `STRX_PITCH`/`STRX_ROLL`/`STRX_HEAD` stay Stratux):
 
   -------------------------------------------------------------------------
   Source     MGL         FIX meaning        FIX key            Units      Status
@@ -679,7 +679,7 @@ Provisional mapping (source-specific; canonical `PITCH`/`ROLL`/`HEAD` stay Strat
 
 Plugin: `fix_gateway_plugins/cozy_mgl_airtalk` (`module: cozy_mgl_airtalk`).
 Keys are defined in `config/fixgw/database/custom.yaml`. Live page shows
-`MGL_AT_*` instruments above Stratux `PITCH`/`ROLL`/`HEAD`.
+`MGL_AT_*` instruments above Stratux `STRX_PITCH`/`STRX_ROLL`/`STRX_HEAD`.
 
 ### FIX integration hooks
 

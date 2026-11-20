@@ -17,6 +17,7 @@ def create_app() -> FastAPI:
     if STATIC_DIR.is_dir():
         app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
+    from web.app.api import avplan as avplan_api
     from web.app.api import configuration as configuration_api
     from web.app.api import events as events_api
     from web.app.api import exports as exports_api
@@ -39,6 +40,7 @@ def create_app() -> FastAPI:
     app.include_router(external_data_api.router)
     app.include_router(flights_api.router)
     app.include_router(historian_api.router)
+    app.include_router(avplan_api.router)
     app.include_router(events_api.router)
     app.include_router(exports_api.router)
     app.include_router(mgl_can_api.router)

@@ -20,6 +20,27 @@
     </div>
   </details>
 
+  <details class="twisty" open>
+    <summary>AvPlan merge <span class="twisty-meta" id="avplan-meta">GPX → historian</span></summary>
+    <div class="twisty-body">
+      <p class="muted">After the completed AvPlan GPX is copied into flight-plans (same file as the plan; track is separate from the route), pick the GPX. Merge onto an existing historian recording, or create a flight from the GPX alone when there is no FIX capture. Files from the same UTC day with a track are listed first.</p>
+      <div class="plot-params" style="margin-bottom:0.75rem;">
+        <label class="muted">Historian flight
+          <select id="avplan-flight" class="field-select"></select>
+        </label>
+        <label class="muted">AvPlan GPX
+          <select id="avplan-gpx" class="field-select"></select>
+        </label>
+      </div>
+      <p id="avplan-hint" class="muted"></p>
+      <div class="row-actions" style="margin-top:0;">
+        <button type="button" class="primary" id="btn-avplan-merge">Merge into flight</button>
+        <button type="button" id="btn-avplan-create">Create flight from GPX</button>
+      </div>
+      <p id="avplan-msg" class="muted"></p>
+    </div>
+  </details>
+
   <details class="twisty">
     <summary>External Data <span class="twisty-meta">MGL card</span></summary>
     <div class="twisty-body" id="external-data">
@@ -28,5 +49,5 @@
   </details>
 {% endblock %}
 {% block scripts %}
-<script src="/static/js/flights.js"></script>
+<script src="/static/js/flights.js?v={{ static_v('js/flights.js') }}"></script>
 {% endblock %}

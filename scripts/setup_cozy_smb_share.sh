@@ -67,16 +67,28 @@ from pathlib import Path
 import sys
 p = Path(sys.argv[1])
 text = p.read_text(encoding="utf-8")
+lines = [
+    ln
+    for ln in text.splitlines(True)
+    if "smb.conf.d/apple-vfs.conf" not in ln and "smb.conf.d/cozy-data.conf" not in ln
+]
+text = "".join(lines)
 needle = "[global]"
 idx = text.find(needle)
 if idx < 0:
     raise SystemExit(f"no [global] in {p}")
 insert_at = idx + len(needle)
-block = (
-    "\ninclude = /etc/samba/smb.conf.d/apple-vfs.conf\n"
-    "include = /etc/samba/smb.conf.d/cozy-data.conf"
+text = (
+    text[:insert_at]
+    + "\n   include = /etc/samba/smb.conf.d/apple-vfs.conf\n"
+    + text[insert_at:]
 )
-p.write_text(text[:insert_at] + block + text[insert_at:], encoding="utf-8")
+if not text.endswith("\n"):
+    text += "\n"
+# Share snippet must not be included inside [global]; it starts [cozy-data]
+# and Samba then treats the rest of [global] as share parameters (start timeout).
+text += "\ninclude = /etc/samba/smb.conf.d/cozy-data.conf\n"
+p.write_text(text, encoding="utf-8")
 PY
   fi
 }
@@ -117,6 +129,8 @@ EOF
   cat >/etc/systemd/system/smbd.service.d/logdir.conf <<'EOF'
 [Service]
 ExecStartPre=/bin/mkdir -p /var/log/samba
+Type=simple
+TimeoutStartSec=30
 EOF
   systemctl daemon-reload 2>/dev/null || true
 }

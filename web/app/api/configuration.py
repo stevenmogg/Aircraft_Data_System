@@ -6,6 +6,7 @@ from pathlib import Path
 
 from fastapi import APIRouter
 
+from historian.database.fix_catalog import load_signals_from_historian_cfg
 from historian.database.repository import HistorianDB, load_yaml
 from web.app.services import wifi as wifi_svc
 
@@ -25,13 +26,20 @@ def _aircraft_block() -> dict:
 def _historian_signals() -> dict:
     if not HISTORIAN_YAML.exists():
         return {"ok": False}
-    hist = (load_yaml(HISTORIAN_YAML).get("historian") or {})
+    hist = load_yaml(HISTORIAN_YAML).get("historian") or {}
+    signals = load_signals_from_historian_cfg(hist)
+    fast = {k: s for k, s in signals.items() if int(s.get("rate_hz") or 10) == 10}
+    slow = {k: s for k, s in signals.items() if int(s.get("rate_hz") or 10) != 10}
     return {
         "ok": True,
         "fast_rate_hz": hist.get("fast_rate_hz"),
         "slow_rate_hz": hist.get("slow_rate_hz"),
-        "fast_signals": hist.get("fast_signals") or {},
-        "slow_signals": hist.get("slow_signals") or {},
+        "signal_count": len(signals),
+        "fast_count": len(fast),
+        "slow_count": len(slow),
+        "signals": signals,
+        "fast_signals": {k: s["column"] for k, s in fast.items()},
+        "slow_signals": {k: s["column"] for k, s in slow.items()},
         "fix": hist.get("fix") or {},
         "control_socket": hist.get("control_socket"),
         "database_path": hist.get("database_path"),

@@ -531,3 +531,145 @@ td.changed {
   font-variant-numeric: tabular-nums;
   margin: 0.15rem 0 0.35rem;
 }
+
+.field-select {
+  min-height: var(--touch);
+  background: #101820;
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0 0.5rem;
+  font-size: 1rem;
+  max-width: 100%;
+}
+
+.plot-params {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 0.75rem;
+  margin: 0 0 1rem;
+}
+
+.plot-params label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.chart-wrap {
+  position: relative;
+  width: 100%;
+}
+
+.chart-wrap canvas {
+  display: block;
+  width: 100%;
+  height: auto;
+  background: #101820;
+  border-radius: 8px;
+  cursor: crosshair;
+}
+
+.chart-tip {
+  position: absolute;
+  pointer-events: none;
+  z-index: 2;
+  min-width: 11rem;
+  background: rgba(16, 24, 32, 0.94);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.45rem 0.7rem;
+  font-size: 0.85rem;
+  font-variant-numeric: tabular-nums;
+  color: var(--text);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.35);
+}
+
+.chart-tip-time {
+  color: var(--muted);
+  margin-bottom: 0.3rem;
+}
+
+.chart-tip-row {
+  display: grid;
+  grid-template-columns: 8px minmax(0, 1fr) auto;
+  align-items: baseline;
+  gap: 0.5rem;
+  white-space: nowrap;
+}
+
+.chart-tip-swatch {
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  flex: 0 0 auto;
+}
+
+.chart-tip-name {
+  color: var(--muted);
+}
+
+.chart-tip-val {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.analysis-map-block {
+  margin-top: 0.25rem;
+}
+
+.analysis-map {
+  width: 100%;
+  height: 380px;
+  background: #101820;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+}
+
+.analysis-map.leaflet-container,
+.analysis-map .leaflet-container {
+  background: #101820;
+  font-family: inherit;
+  height: 380px;
+}
+
+.analysis-map .leaflet-control-attribution {
+  background: rgba(16, 24, 32, 0.75);
+  color: var(--muted);
+}
+
+.analysis-map .leaflet-control-attribution a {
+  color: var(--accent);
+}
+
+.analysis-map .leaflet-bar a {
+  background: #1b2833;
+  color: var(--text);
+  border-bottom-color: var(--border);
+}
+
+.analysis-map .leaflet-bar a:hover {
+  background: #243442;
+}
+
+.map-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.5rem;
+  font-size: 0.9rem;
+}
+
+.map-legend-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: var(--muted);
+}
+
+.map-legend-swatch {
+  width: 16px;
+  height: 3px;
+  border-radius: 2px;
+}

@@ -174,7 +174,7 @@ def decode_fields(dest: int, msg_type: int, data: bytes) -> list[dict]:
     return out
 
 
-# Source-specific FIX keys. Canonical PITCH/ROLL/HEAD stay Stratux-owned.
+# Source-specific FIX keys. STRX_PITCH/STRX_ROLL/STRX_HEAD stay Stratux-owned.
 FIX_EULER_KEYS = {
     "Bank": "MGL_AT_ROLL",
     "Pitch": "MGL_AT_PITCH",

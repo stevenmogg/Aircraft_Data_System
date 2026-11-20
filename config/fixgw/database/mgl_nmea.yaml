@@ -1,6 +1,6 @@
 items:
 # MGL Extreme NMEA 0183 source-specific keys (prefix MGL_NMEA_).
-# Canonical LAT/LONG/GS/TRACK remain Stratux (USB GPS).
+# Canonical STRX_LAT/STRX_LONG/STRX_GS/STRX_TRACK remain Stratux (USB GPS).
 # GGA altitude is stored as feet MSL (converted from metres on ingest).
 
 - key: MGL_NMEA_RAW

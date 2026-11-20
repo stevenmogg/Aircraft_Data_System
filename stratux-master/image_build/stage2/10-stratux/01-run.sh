@@ -191,10 +191,15 @@ on_chroot << EOF
     chmod 2775 /cozy-data-system/data/flight-plans
     if ! grep -q 'smb.conf.d/apple-vfs.conf' /etc/samba/smb.conf 2>/dev/null; then
         sed -i '/^\[global\]/a\
-   include = /etc/samba/smb.conf.d/apple-vfs.conf\
-   include = /etc/samba/smb.conf.d/cozy-data.conf' /etc/samba/smb.conf
+   include = /etc/samba/smb.conf.d/apple-vfs.conf' /etc/samba/smb.conf
+    fi
+    if ! grep -q 'smb.conf.d/cozy-data.conf' /etc/samba/smb.conf 2>/dev/null; then
+        printf '\ninclude = /etc/samba/smb.conf.d/cozy-data.conf\n' >> /etc/samba/smb.conf
     fi
     sed -i '/^include = \/etc\/samba\/smb.conf.d\/\*\.conf$/d' /etc/samba/smb.conf
+    mkdir -p /var/log/samba /etc/tmpfiles.d /etc/systemd/system/smbd.service.d
+    printf 'd /var/log/samba 0755 root root -\n' > /etc/tmpfiles.d/cozy-samba.conf
+    printf '[Service]\nExecStartPre=/bin/mkdir -p /var/log/samba\n' > /etc/systemd/system/smbd.service.d/logdir.conf
     if ! pdbedit -L 2>/dev/null | grep -q '^pi:'; then
         (echo raspberry; echo raspberry) | smbpasswd -a pi -s
     fi

@@ -1,29 +1,59 @@
 {% extends "base.html" %}
 {% block title %}Analysis — Cozy{% endblock %}
+{% block head %}
+<link rel="stylesheet" href="/static/vendor/leaflet.css?v={{ static_v('vendor/leaflet.css') }}">
+{% endblock %}
 {% block content %}
   <header class="page-top">
     <h1>Analysis</h1>
     <p class="lede">Inspect recorded parameters for a selected flight.</p>
     <div class="page-top-body row-actions" style="margin:0;">
       <label class="muted">Flight
-        <select id="flight-select" style="min-height:52px;margin-left:0.5rem;background:#101820;color:var(--text);border:1px solid var(--border);border-radius:8px;padding:0 0.5rem;"></select>
+        <select id="flight-select" class="field-select" style="margin-left:0.5rem;"></select>
       </label>
-      <button type="button" class="primary" id="btn-plot">Plot pitch/roll</button>
     </div>
   </header>
 
   <details class="twisty" open>
-    <summary>Plot <span class="twisty-meta">pitch / roll</span></summary>
+    <summary>Plot <span class="twisty-meta" id="plot-meta">select a flight</span></summary>
     <div class="twisty-body">
+      <div id="plot-controls" hidden>
+        <p class="muted" style="margin-top:0;">Choose up to four parameters. Defaults are MGL pitch, roll, TAS (or MGL GS if TAS is not logged), and altitude.</p>
+        <div class="plot-params">
+          <label class="muted">Parameter 1
+            <select id="param-0" class="field-select"></select>
+          </label>
+          <label class="muted">Parameter 2
+            <select id="param-1" class="field-select"></select>
+          </label>
+          <label class="muted">Parameter 3
+            <select id="param-2" class="field-select"></select>
+          </label>
+          <label class="muted">Parameter 4
+            <select id="param-3" class="field-select"></select>
+          </label>
+        </div>
+        <div class="row-actions" style="margin-top:0;">
+          <button type="button" class="primary" id="btn-plot">Plot</button>
+        </div>
+      </div>
       <p id="analysis-msg" class="muted"></p>
-      <canvas id="chart" width="1000" height="360" style="width:100%;height:auto;background:#101820;border-radius:8px;"></canvas>
+      <div class="chart-wrap" id="chart-wrap">
+        <canvas id="chart" width="1000" height="360"></canvas>
+        <div class="chart-tip" id="chart-tip" hidden></div>
+      </div>
+      <div class="analysis-map-block">
+        <p class="muted" id="map-msg" style="margin:0.75rem 0 0.5rem;">Map loads with the flight.</p>
+        <div id="analysis-map" class="analysis-map"></div>
+        <div id="map-legend" class="map-legend" hidden></div>
+      </div>
     </div>
   </details>
 
   <details class="twisty">
     <summary>Export <span class="twisty-meta">CSV</span></summary>
     <div class="twisty-body">
-      <p class="muted">Download the selected flight as CSV for offline review.</p>
+      <p class="muted">Download every recorded field for the selected flight (all 10 Hz columns, plus 1 Hz fields aligned by flight time).</p>
       <div class="row-actions" style="margin-top:0;">
         <a class="btn" id="btn-export" href="#">Export CSV</a>
       </div>
@@ -31,5 +61,6 @@
   </details>
 {% endblock %}
 {% block scripts %}
-<script src="/static/js/analysis.js"></script>
+<script src="/static/vendor/leaflet.js?v={{ static_v('vendor/leaflet.js') }}"></script>
+<script src="/static/js/analysis.js?v={{ static_v('js/analysis.js') }}"></script>
 {% endblock %}

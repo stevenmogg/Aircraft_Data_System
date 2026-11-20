@@ -7,8 +7,15 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any
 
+from historian.database.fix_catalog import load_signals_from_historian_cfg
 from historian.database.migrations import get_schema_version, migrate, set_schema_version
-from historian.database.schema import SCHEMA_SQL, SCHEMA_VERSION
+from historian.database.schema import (
+    SCHEMA_SQL,
+    SCHEMA_VERSION,
+    ensure_signal_columns,
+    quote_ident,
+    table_columns,
+)
 
 try:
     import yaml
@@ -29,9 +36,15 @@ def load_yaml(path: Path) -> dict[str, Any]:
 
 
 class HistorianDB:
-    def __init__(self, path: Path, aircraft_cfg: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        path: Path,
+        aircraft_cfg: dict[str, Any] | None = None,
+        signals: dict[str, dict[str, Any]] | None = None,
+    ):
         self.path = Path(path)
         self.aircraft_cfg = aircraft_cfg or {}
+        self.signals = signals or {}
 
     @classmethod
     def from_config_files(
@@ -44,7 +57,11 @@ class HistorianDB:
         acfg = load_yaml(aircraft_yaml)
         hist = hcfg.get("historian") or {}
         path = Path(db_path) if db_path else Path(hist["database_path"])
-        return cls(path, aircraft_cfg=acfg)
+        return cls(
+            path,
+            aircraft_cfg=acfg,
+            signals=load_signals_from_historian_cfg(hist),
+        )
 
     def connect(self) -> sqlite3.Connection:
         self.path.parent.mkdir(parents=True, exist_ok=True)
@@ -70,6 +87,7 @@ class HistorianDB:
                 created["schema"] = True
             else:
                 migrate(conn)
+            ensure_signal_columns(conn, self.signals)
             created["aircraft"] = self._seed_aircraft(conn)
             created["configuration"] = self._seed_configuration(conn)
             conn.commit()
@@ -168,6 +186,7 @@ class HistorianDB:
                 "historian_10hz",
                 "historian_1hz",
                 "event",
+                "signal",
             ):
                 try:
                     n = conn.execute(f"SELECT COUNT(*) AS n FROM {table}").fetchone()["n"]
@@ -326,12 +345,15 @@ class HistorianDB:
     ) -> None:
         cols = ["flight_id", "frame_number", "historian_time_utc", "flight_time_s"]
         vals: list[Any] = [flight_id, frame_number, historian_time_utc, flight_time_s]
+        existing = table_columns(conn, "historian_10hz")
         for name, value in columns.items():
-            cols.append(name)
-            vals.append(value)
+            if name in existing:
+                cols.append(name)
+                vals.append(value)
         placeholders = ",".join("?" for _ in cols)
+        col_sql = ",".join(quote_ident(c) for c in cols)
         conn.execute(
-            f"INSERT INTO historian_10hz ({','.join(cols)}) VALUES ({placeholders})",
+            f"INSERT INTO historian_10hz ({col_sql}) VALUES ({placeholders})",
             vals,
         )
 
@@ -346,27 +368,15 @@ class HistorianDB:
     ) -> None:
         cols = ["flight_id", "frame_number", "historian_time_utc", "flight_time_s"]
         vals: list[Any] = [flight_id, frame_number, historian_time_utc, flight_time_s]
+        existing = table_columns(conn, "historian_1hz")
         for name, value in columns.items():
-            cols.append(name)
-            vals.append(value)
+            if name in existing:
+                cols.append(name)
+                vals.append(value)
         placeholders = ",".join("?" for _ in cols)
-        # 1 Hz table may not yet have slow columns — only write known mandatory fields
-        # plus any columns that exist on the table.
-        if columns:
-            existing = {
-                r[1]
-                for r in conn.execute("PRAGMA table_info(historian_1hz)").fetchall()
-            }
-            cols2 = cols[:4]
-            vals2 = vals[:4]
-            for name, value in columns.items():
-                if name in existing:
-                    cols2.append(name)
-                    vals2.append(value)
-            cols, vals = cols2, vals2
-        placeholders = ",".join("?" for _ in cols)
+        col_sql = ",".join(quote_ident(c) for c in cols)
         conn.execute(
-            f"INSERT INTO historian_1hz ({','.join(cols)}) VALUES ({placeholders})",
+            f"INSERT INTO historian_1hz ({col_sql}) VALUES ({placeholders})",
             vals,
         )
 

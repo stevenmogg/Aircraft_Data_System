@@ -60,13 +60,13 @@ sudo systemctl restart stratux
 
 `STRATUX: true` with `connections/stratux_http.yaml` polls `/getSituation` and publishes:
 
-- `LAT`, `LONG`, `GS`, `TRACK`
-- `ALT` (GPS MSL when fix; else baro), `PALT` (baro)
-- `GPS_FIX_TYPE`, `GPS_SATS_TRACKED`, accuracies when present
+- `STRX_LAT`, `STRX_LONG`, `STRX_GS`, `STRX_TRACK`
+- `STRX_ALT` (GPS MSL when fix; else baro), `STRX_PALT` (baro)
+- `STRX_GPS_FIX_TYPE`, `STRX_GPS_SATS_TRACKED`, accuracies when present
 
 Keep `GPSD: false`. Stratux USB GPS does not use this UART; Extreme NMEA does.
 
-Historian samples `LAT` / `LONG` / `GS` / `TRACK` / `ALT` / `PALT` at 10 Hz when recording.
+Historian samples `STRX_LAT` / `STRX_LONG` / `STRX_GS` / `STRX_TRACK` / `STRX_ALT` / `STRX_PALT` at 10 Hz when recording (SQLite columns stay `fix_lat`, …).
 
 ## Verify
 

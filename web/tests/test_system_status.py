@@ -94,3 +94,57 @@ def test_port_listening_from_proc(monkeypatch):
     monkeypatch.setattr(sys_svc, "_read_text", fake_read)
     assert sys_svc._port_listening(445) is True
     assert sys_svc._port_listening(139) is False
+
+
+PROC_STAT = """cpu  100 10 50 800 40 5 15 0 0 0
+cpu0 50 5 25 400 20 2 8 0 0 0
+intr 0
+"""
+
+PROC_STAT_LATER = """cpu  160 20 80 860 50 7 23 0 0 0
+cpu0 80 10 40 430 25 3 12 0 0 0
+intr 0
+"""
+
+PROC_NET = """Inter-|   Receive                                                |  Transmit
+ face |bytes    packets errs drop fifo frame compressed multicast|bytes    packets errs drop fifo colls carrier compressed
+    lo: 100 0 0 0 0 0 0 0 200 0 0 0 0 0 0 0
+  wlan0: 1000 1 0 0 0 0 0 0 400 1 0 0 0 0 0 0
+  veth0: 9 0 0 0 0 0 0 0 9 0 0 0 0 0 0 0
+"""
+
+PROC_DISK = """   8       0 sda 1 0 200 0 3 0 100 0 0 0 0
+   8       1 sda1 1 0 10 0 3 0 10 0 0 0 0
+ 179       0 mmcblk0 10 0 400 0 5 0 80 0 0 0 0
+ 179       1 mmcblk0p1 10 0 40 0 5 0 8 0 0 0 0
+   7       0 loop0 0 0 0 0 0 0 0 0 0 0 0
+"""
+
+
+def test_parse_proc_stat_and_cpu_percent():
+    a = sys_svc.parse_proc_stat(PROC_STAT)
+    b = sys_svc.parse_proc_stat(PROC_STAT_LATER)
+    assert a["total"] == 100 + 10 + 50 + 800 + 40 + 5 + 15
+    pct = sys_svc.cpu_percent_from_delta(a, b)
+    # iowait is counted as idle for overall busy % (110/180)
+    assert pct["percent"] == 61.1
+    assert pct["user_pct"] == 38.9
+    assert pct["system_pct"] == 22.2
+    assert pct["iowait_pct"] == 5.6
+
+
+def test_parse_proc_net_dev_skips_virtual():
+    nets = sys_svc.parse_proc_net_dev(PROC_NET)
+    assert "lo" not in nets
+    assert "veth0" not in nets
+    assert nets["wlan0"]["rx_bytes"] == 1000
+    assert nets["wlan0"]["tx_bytes"] == 400
+
+
+def test_parse_proc_diskstats_whole_disks_only():
+    disks = sys_svc.parse_proc_diskstats(PROC_DISK)
+    assert "loop0" not in disks
+    assert "sda1" not in disks
+    assert "mmcblk0p1" not in disks
+    assert disks["sda"]["read_bytes"] == 200 * 512
+    assert disks["mmcblk0"]["write_bytes"] == 80 * 512

@@ -1,36 +1,1809 @@
-# Cozy Aircraft Historian — sampling configuration (Phase 4 / Historian Phase 1)
+# Cozy Aircraft Historian — sampling configuration
 #
-# FIX keys listed here must exist in FIX-Gateway (or will be stored as NULL).
-# Column names in SQLite use a fix_ prefix (see schema).
+# Every FIX-Gateway database key is listed under signals with the units
+# stored in FIX (empty string if FIX has none), plus description and limits
+# copied from the FIX item. Convert on ingest into FIX; Historian records
+# those values unchanged.
+#
+# column: SQLite column on historian_10hz (rate_hz 10) or historian_1hz (rate_hz 1).
+# Regenerated from config/fixgw/database/ via historian.database.fix_catalog.
 
 historian:
   database_path: /cozy-data-system/data/historian/cozy_historian.sqlite
   aircraft_id: COZ
   fast_rate_hz: 10
   slow_rate_hz: 1
-  # Commit batch size (rows)
   commit_every_frames: 10
-  # Timing overrun threshold for 10 Hz (seconds)
   sample_tolerance_s: 0.05
-  # Unix socket for daemon Start/Stop (CLI + future web UI)
   control_socket: /cozy-data-system/data/historian/historian.sock
 
   fix:
     host: 127.0.0.1
     port: 3490
 
-  # Maps FIX key -> historian_10hz column (without requiring engine sensors yet)
-  fast_signals:
-    LAT: fix_lat
-    LONG: fix_long
-    PITCH: fix_pitch
-    ROLL: fix_roll
-    HEAD: fix_head
-    ALT: fix_alt
-    PALT: fix_palt
-    VS: fix_vs
-    ALAT: fix_alat
-    GS: fix_gs
-    TRACK: fix_track
-
-  slow_signals: {}
+  signals:
+    STRX_LAT:
+      column: fix_lat
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS latitude
+      min: -90.0
+      max: 90.0
+      initial: 0.0
+      tol: 20000
+    STRX_LONG:
+      column: fix_long
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS longitude
+      min: -180.0
+      max: 180.0
+      initial: 0.0
+      tol: 20000
+    STRX_GS:
+      column: fix_gs
+      units: knots
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS ground speed
+      min: 0.0
+      max: 2000.0
+      initial: 0.0
+      tol: 2000
+    STRX_ALT:
+      column: fix_alt
+      units: ft
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS altitude MSL (GPSAltitudeMSL, already feet)
+      min: -2000.0
+      max: 60000.0
+      initial: 0.0
+      tol: 2000
+    STRX_PALT:
+      column: fix_palt
+      units: ft
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux pressure altitude (BaroPressureAltitude)
+      min: -1000.0
+      max: 60000.0
+      initial: 0.0
+      tol: 2000
+    STRX_VS:
+      column: fix_vs
+      units: ft/min
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux vertical speed
+      min: -30000.0
+      max: 30000.0
+      initial: 0.0
+      tol: 2000
+    STRX_HEAD:
+      column: fix_head
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux magnetic / gyro heading
+      min: 0.0
+      max: 359.9
+      initial: 0.0
+      tol: 2000
+    STRX_TRACK:
+      column: fix_track
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS true course
+      min: 0.0
+      max: 359.9
+      initial: 0.0
+      tol: 2000
+    STRX_ROLL:
+      column: fix_roll
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux roll angle
+      min: -180.0
+      max: 180.0
+      initial: 0.0
+      tol: 300
+    STRX_PITCH:
+      column: fix_pitch
+      units: deg
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux pitch angle
+      min: -90.0
+      max: 90.0
+      initial: 0.0
+      tol: 300
+    STRX_ALAT:
+      column: fix_alat
+      units: g
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux lateral acceleration (from slip/skid)
+      min: -30.0
+      max: 30.0
+      initial: 0.0
+      tol: 300
+    STRX_GPS_SATS_TRACKED:
+      column: STRX_GPS_SATS_TRACKED
+      units: ""
+      type: int
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS satellites tracked
+      min: 0
+      max: 200
+      initial: 0
+      tol: 2000
+    STRX_GPS_ACCURACY_HORIZ:
+      column: STRX_GPS_ACCURACY_HORIZ
+      units: ft
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS horizontal accuracy
+      min: 0
+      max: 200
+      initial: 0
+      tol: 2000
+    STRX_GPS_ACCURACY_VERTICAL:
+      column: STRX_GPS_ACCURACY_VERTICAL
+      units: ft
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux GPS vertical accuracy
+      min: 0
+      max: 200
+      initial: 0
+      tol: 2000
+    STRX_GPS_FIX_TYPE:
+      column: STRX_GPS_FIX_TYPE
+      units: ""
+      type: int
+      rate_hz: 10
+      source: stratux
+      description: "0-1: no fix, 2: 2D fix, 3: 3D fix. 4: 3D with DGPS. 5: 3D with RTK"
+      min: 0
+      max: 5
+      initial: 0
+      tol: 2000
+    STRX_GPS_ELLIPSOID_ALT:
+      column: STRX_GPS_ELLIPSOID_ALT
+      units: ft
+      type: float
+      rate_hz: 10
+      source: stratux
+      description: Stratux height above ellipsoid
+      min: -2000
+      max: 60000
+      initial: 0
+      tol: 2000
+    HIDEBUTTON:
+      column: HIDEBUTTON
+      units: ""
+      type: bool
+      rate_hz: 1
+      source: system
+      description: When true some buttons will be hidden, if they are configured to do so
+      initial: false
+    QVOTE1:
+      column: QVOTE1
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Quorum vote for node 1
+      min: 0
+      max: 500
+      initial: 0
+      tol: 1000
+    QVOTE2:
+      column: QVOTE2
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Quorum vote for node 2
+      min: 0
+      max: 500
+      initial: 0
+      tol: 1000
+    QVOTE3:
+      column: QVOTE3
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Quorum vote for node 3
+      min: 0
+      max: 500
+      initial: 0
+      tol: 1000
+    QVOTE4:
+      column: QVOTE4
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Quorum vote for node 4
+      min: 0
+      max: 500
+      initial: 0
+      tol: 1000
+    QVOTE5:
+      column: QVOTE5
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Quorum vote for node 5
+      min: 0
+      max: 500
+      initial: 0
+      tol: 1000
+    LEADER:
+      column: LEADER
+      units: ""
+      type: bool
+      rate_hz: 1
+      source: system
+      description: The quorum plugin will set this false if those is not the leader, use it when making decisions to take actions
+      initial: true
+    TIMEZ:
+      column: TIMEZ
+      units: ""
+      type: str
+      rate_hz: 1
+      source: system
+      description: Zulu Time String
+      tol: 2000
+    TIMEZH:
+      column: TIMEZH
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Zulu Time Hour
+      min: 0
+      max: 23
+      initial: 0
+      tol: 2000
+    TIMEZM:
+      column: TIMEZM
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Zulu Time Minute
+      min: 0
+      max: 59
+      initial: 0
+      tol: 2000
+    TIMEZS:
+      column: TIMEZS
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: Zulu Time Second
+      min: 0
+      max: 59
+      initial: 0
+      tol: 2000
+    TIMEL:
+      column: TIMEL
+      units: ""
+      type: str
+      rate_hz: 1
+      source: system
+      description: Local Time String
+      tol: 0
+    TZONE:
+      column: TZONE
+      units: ""
+      type: float
+      rate_hz: 1
+      source: system
+      description: Time Zone
+      min: -12.0
+      max: 12.0
+      initial: 0.0
+    GATEWAY_VERSION:
+      column: GATEWAY_VERSION
+      units: ""
+      type: str
+      rate_hz: 1
+      source: system
+      description: Version of the gateway
+      tol: 0
+    PYEFIS_VERSION:
+      column: PYEFIS_VERSION
+      units: ""
+      type: str
+      rate_hz: 1
+      source: system
+      description: Version of pyefis
+      tol: 0
+    BAT_REMAINING:
+      column: BAT_REMAINING
+      units: ""
+      type: int
+      rate_hz: 1
+      source: system
+      description: System battery remaining
+      min: 0
+      max: 100
+      initial: 100
+    BAT_VOLTAGE:
+      column: BAT_VOLTAGE
+      units: ""
+      type: float
+      rate_hz: 1
+      source: system
+      description: System battery voltage
+      min: 0
+      max: 5
+      initial: 5
+    BAT_CHARGING:
+      column: BAT_CHARGING
+      units: ""
+      type: bool
+      rate_hz: 1
+      source: system
+      description: System battery is charging
+      initial: false
+    POWER_FAIL:
+      column: POWER_FAIL
+      units: ""
+      type: bool
+      rate_hz: 1
+      source: system
+      description: System power is disconnected
+      initial: false
+    MGL_AT_PITCH:
+      column: MGL_AT_PITCH
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk pitch (FF/37 Euler10, + up)
+      min: -90.0
+      max: 90.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_ROLL:
+      column: MGL_AT_ROLL
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk bank (FF/37 Euler10, + left)
+      min: -180.0
+      max: 180.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_YAW:
+      column: MGL_AT_YAW
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk AHRS yaw (FF/37, zeros at power-up; not mag heading)
+      min: -360.0
+      max: 720.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_HEAD:
+      column: MGL_AT_HEAD
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk magnetic heading (FF/32, 1 deg)
+      min: 0.0
+      max: 359.9
+      initial: 0.0
+      tol: 500
+    MGL_AT_HEAD_STATUS:
+      column: MGL_AT_HEAD_STATUS
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk heading status byte (FF/32)
+      min: 0
+      max: 255
+      initial: 0
+      tol: 500
+    MGL_AT_SLIP:
+      column: MGL_AT_SLIP
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk slip (FF/37, + ball to the right)
+      min: -50.0
+      max: 50.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_G:
+      column: MGL_AT_G
+      units: g
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk normal acceleration (FF/37 fps)
+      min: -10.0
+      max: 30.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_TURN:
+      column: MGL_AT_TURN
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk turn rate raw (FF/37, + right; scale TBD)
+      min: -32768.0
+      max: 32767.0
+      initial: 0.0
+      tol: 300
+    MGL_AT_MISC:
+      column: MGL_AT_MISC
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_airtalk
+      description: MGL Airtalk SP-4 MISC status byte (FF/37)
+      min: 0
+      max: 255
+      initial: 0
+      tol: 300
+    MGL_RDAC_FF1PC:
+      column: MGL_RDAC_FF1PC
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel-flow 1 pulse count (ID 1)
+      min: 0
+      max: 65535
+      initial: 0
+      tol: 8000
+    MGL_RDAC_FF1PR:
+      column: MGL_RDAC_FF1PR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel-flow 1 pulse ratio (ID 1)
+      min: 0.0
+      max: 1000.0
+      initial: 0.0
+      tol: 8000
+    MGL_RDAC_FF2PC:
+      column: MGL_RDAC_FF2PC
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel-flow 2 pulse count (ID 1)
+      min: 0
+      max: 65535
+      initial: 0
+      tol: 8000
+    MGL_RDAC_FF2PR:
+      column: MGL_RDAC_FF2PR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel-flow 2 pulse ratio (ID 1)
+      min: 0.0
+      max: 1000.0
+      initial: 0.0
+      tol: 8000
+    MGL_RDAC_TC1:
+      column: MGL_RDAC_TC1
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 1 compensated (ID 2)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC2:
+      column: MGL_RDAC_TC2
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 2 compensated (ID 2)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC3:
+      column: MGL_RDAC_TC3
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 3 compensated (ID 2)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC4:
+      column: MGL_RDAC_TC4
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 4 compensated (ID 2)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC5:
+      column: MGL_RDAC_TC5
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 5 compensated (ID 3)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC6:
+      column: MGL_RDAC_TC6
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 6 compensated (ID 3)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC7:
+      column: MGL_RDAC_TC7
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 7 compensated (ID 3)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC8:
+      column: MGL_RDAC_TC8
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 8 compensated (ID 3)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC9:
+      column: MGL_RDAC_TC9
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 9 compensated (ID 4)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC10:
+      column: MGL_RDAC_TC10
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 10 compensated (ID 4)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC11:
+      column: MGL_RDAC_TC11
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 11 compensated (ID 4)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_TC12:
+      column: MGL_RDAC_TC12
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC thermocouple 12 compensated (ID 4)
+      min: -400.0
+      max: 3000.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_OILT_RAW:
+      column: MGL_RDAC_OILT_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC oil temperature ADC (ID 5)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_OILP_RAW:
+      column: MGL_RDAC_OILP_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC oil pressure ADC (ID 5)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_AUX1_RAW:
+      column: MGL_RDAC_AUX1_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC AUX1 ADC (ID 5)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_AUX2_RAW:
+      column: MGL_RDAC_AUX2_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC AUX2 ADC (ID 5)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_FUELP_RAW:
+      column: MGL_RDAC_FUELP_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel pressure ADC (ID 6)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_COOLANT_RAW:
+      column: MGL_RDAC_COOLANT_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC coolant ADC (ID 6)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_FUELLEVEL1_RAW:
+      column: MGL_RDAC_FUELLEVEL1_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel level 1 ADC (ID 6)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_FUELLEVEL2_RAW:
+      column: MGL_RDAC_FUELLEVEL2_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC fuel level 2 ADC (ID 6)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 2000
+    MGL_RDAC_TEMP:
+      column: MGL_RDAC_TEMP
+      units: degF
+      type: float
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC cold-junction temperature (ID 7)
+      min: -60.0
+      max: 320.0
+      initial: 0.0
+      tol: 2000
+    MGL_RDAC_SUPPLY_RAW:
+      column: MGL_RDAC_SUPPLY_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC supply voltage raw (ID 7)
+      min: 0
+      max: 65535
+      initial: 0
+      tol: 2000
+    MGL_RDAC_RPM1:
+      column: MGL_RDAC_RPM1
+      units: RPM
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC RPM1 (ID 8, 1 pulse/rev)
+      min: 0
+      max: 65535
+      initial: 0
+      tol: 600
+    MGL_RDAC_RPM2:
+      column: MGL_RDAC_RPM2
+      units: RPM
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC RPM2 (ID 8)
+      min: 0
+      max: 65535
+      initial: 0
+      tol: 600
+    MGL_RDAC_MAP_RAW:
+      column: MGL_RDAC_MAP_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC manifold pressure ADC (ID 8)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 600
+    MGL_RDAC_CURRENT_RAW:
+      column: MGL_RDAC_CURRENT_RAW
+      units: raw
+      type: int
+      rate_hz: 10
+      source: mgl_rdac
+      description: RDAC current ADC (ID 8)
+      min: 0
+      max: 4095
+      initial: 0
+      tol: 600
+    MGL_NMEA_RAW:
+      column: MGL_NMEA_RAW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: Last NMEA sentence from MGL Extreme
+      initial: ""
+      tol: 2500
+    MGL_NMEA_GGA_RAW:
+      column: MGL_NMEA_GGA_RAW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: Last GGA sentence from MGL Extreme
+      initial: ""
+      tol: 2500
+    MGL_NMEA_RMC_RAW:
+      column: MGL_NMEA_RMC_RAW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: Last RMC sentence from MGL Extreme
+      initial: ""
+      tol: 2500
+    MGL_NMEA_TALKER:
+      column: MGL_NMEA_TALKER
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: NMEA talker id (GP, GN, …)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_TYPE:
+      column: MGL_NMEA_TYPE
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: NMEA sentence type (GGA, RMC, …)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_CSUM_OK:
+      column: MGL_NMEA_CSUM_OK
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_nmea
+      description: Last sentence checksum valid
+      initial: false
+      tol: 2500
+    MGL_NMEA_TIME:
+      column: MGL_NMEA_TIME
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: UTC time of fix (hhmmss.ss)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_DATE:
+      column: MGL_NMEA_DATE
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: UTC date (ddmmyy)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_LAT:
+      column: MGL_NMEA_LAT
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: MGL NMEA latitude (decimal degrees, +N)
+      min: -90.0
+      max: 90.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_LAT_RAW:
+      column: MGL_NMEA_LAT_RAW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: MGL NMEA latitude ddmm.mmmmm
+      initial: ""
+      tol: 2500
+    MGL_NMEA_NS:
+      column: MGL_NMEA_NS
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: MGL NMEA latitude hemisphere (N/S)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_LONG:
+      column: MGL_NMEA_LONG
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: MGL NMEA longitude (decimal degrees, +E)
+      min: -180.0
+      max: 180.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_LONG_RAW:
+      column: MGL_NMEA_LONG_RAW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: MGL NMEA longitude dddmm.mmmmm
+      initial: ""
+      tol: 2500
+    MGL_NMEA_EW:
+      column: MGL_NMEA_EW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: MGL NMEA longitude hemisphere (E/W)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_QUAL:
+      column: MGL_NMEA_QUAL
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GGA fix quality (0 none, 1 GPS, 2 DGPS)
+      min: 0
+      max: 9
+      initial: 0
+      tol: 2500
+    MGL_NMEA_STATUS:
+      column: MGL_NMEA_STATUS
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: RMC/GLL status (A valid, V void)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_VALID:
+      column: MGL_NMEA_VALID
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_nmea
+      description: MGL NMEA position valid
+      initial: false
+      tol: 2500
+    MGL_NMEA_SATS:
+      column: MGL_NMEA_SATS
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GGA satellites used
+      min: 0
+      max: 32
+      initial: 0
+      tol: 2500
+    MGL_NMEA_HDOP:
+      column: MGL_NMEA_HDOP
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: Horizontal dilution of precision
+      min: 0.0
+      max: 99.9
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_ALT:
+      column: MGL_NMEA_ALT
+      units: ft
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: GGA altitude MSL (feet)
+      min: -1500.0
+      max: 60000.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_ALT_UNIT:
+      column: MGL_NMEA_ALT_UNIT
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: GGA altitude unit
+      initial: ""
+      tol: 2500
+    MGL_NMEA_GEOID:
+      column: MGL_NMEA_GEOID
+      units: ft
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: GGA geoid separation
+      min: -700.0
+      max: 700.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_GEOID_UNIT:
+      column: MGL_NMEA_GEOID_UNIT
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: GGA geoid unit
+      initial: ""
+      tol: 2500
+    MGL_NMEA_DGPS_AGE:
+      column: MGL_NMEA_DGPS_AGE
+      units: s
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: GGA DGPS age
+      min: 0.0
+      max: 99.9
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_DGPS_ID:
+      column: MGL_NMEA_DGPS_ID
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: GGA DGPS reference station id
+      initial: ""
+      tol: 2500
+    MGL_NMEA_GS:
+      column: MGL_NMEA_GS
+      units: kt
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: MGL NMEA ground speed
+      min: 0.0
+      max: 999.9
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_GS_KMH:
+      column: MGL_NMEA_GS_KMH
+      units: km/h
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: VTG ground speed
+      min: 0.0
+      max: 1852.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_TRACK:
+      column: MGL_NMEA_TRACK
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: MGL NMEA track over ground (true)
+      min: 0.0
+      max: 360.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_TRACK_MAG:
+      column: MGL_NMEA_TRACK_MAG
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: VTG magnetic track
+      min: 0.0
+      max: 360.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_MAGVAR:
+      column: MGL_NMEA_MAGVAR
+      units: deg
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: RMC magnetic variation
+      min: 0.0
+      max: 180.0
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_MAGVAR_EW:
+      column: MGL_NMEA_MAGVAR_EW
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: RMC magnetic variation E/W
+      initial: ""
+      tol: 2500
+    MGL_NMEA_MODE:
+      column: MGL_NMEA_MODE
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: NMEA mode (A autonomous, D DGPS, N none)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_NAVSTAT:
+      column: MGL_NMEA_NAVSTAT
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: RMC nav status (NMEA 4.1)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_GSA_MODE:
+      column: MGL_NMEA_GSA_MODE
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: GSA selection mode (A/M)
+      initial: ""
+      tol: 2500
+    MGL_NMEA_GSA_FIX:
+      column: MGL_NMEA_GSA_FIX
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GSA fix type (1 none, 2 2D, 3 3D)
+      min: 0
+      max: 3
+      initial: 0
+      tol: 2500
+    MGL_NMEA_PDOP:
+      column: MGL_NMEA_PDOP
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: Position dilution of precision
+      min: 0.0
+      max: 99.9
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_VDOP:
+      column: MGL_NMEA_VDOP
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_nmea
+      description: Vertical dilution of precision
+      min: 0.0
+      max: 99.9
+      initial: 0.0
+      tol: 2500
+    MGL_NMEA_SATS_USED:
+      column: MGL_NMEA_SATS_USED
+      units: ""
+      type: str
+      rate_hz: 1
+      source: mgl_nmea
+      description: GSA PRNs used in the solution
+      initial: ""
+      tol: 2500
+    MGL_NMEA_SATS_VIEW:
+      column: MGL_NMEA_SATS_VIEW
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GSV satellites in view
+      min: 0
+      max: 32
+      initial: 0
+      tol: 2500
+    MGL_NMEA_GSV_TOTAL:
+      column: MGL_NMEA_GSV_TOTAL
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GSV total sentence count
+      min: 0
+      max: 9
+      initial: 0
+      tol: 2500
+    MGL_NMEA_GSV_NUM:
+      column: MGL_NMEA_GSV_NUM
+      units: ""
+      type: int
+      rate_hz: 10
+      source: mgl_nmea
+      description: GSV sentence number
+      min: 0
+      max: 9
+      initial: 0
+      tol: 2500
+    MGL_SRV_ENABLED:
+      column: MGL_SRV_ENABLED
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: Servo emulator enabled
+      initial: false
+      tol: 0
+    MGL_SRV_ALLOW_TX:
+      column: MGL_SRV_ALLOW_TX
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: Config allow_tx interlock
+      initial: false
+      tol: 0
+    MGL_SRV_TX_ARMED:
+      column: MGL_SRV_TX_ARMED
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: Runtime TX armed
+      initial: false
+      tol: 0
+    MGL_SRV_LAST_ID:
+      column: MGL_SRV_LAST_ID
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: Last XTreme identify servo number seen (0 if none)
+      min: 0.0
+      max: 16.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_LAST_ID_OK:
+      column: MGL_SRV_LAST_ID_OK
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: Last identify was accepted by an armed virgin servo
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_NUM:
+      column: MGL_SRV_ROLL_NUM
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL assigned servo number
+      min: 0.0
+      max: 16.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_ADDR:
+      column: MGL_SRV_ROLL_ADDR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL MGL device address
+      min: 0.0
+      max: 31.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_STATE:
+      column: MGL_SRV_ROLL_STATE
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL emulator state 0-4
+      min: 0.0
+      max: 4.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_TGT:
+      column: MGL_SRV_ROLL_TGT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: "ROLL XTreme target (12-bit two's complement, right negative)"
+      min: -2048.0
+      max: 2047.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_TGT_UNW:
+      column: MGL_SRV_ROLL_TGT_UNW
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL XTreme target unwrapped
+      min: -10000000.0
+      max: 10000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_CUR:
+      column: MGL_SRV_ROLL_CUR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: "ROLL emulator current (12-bit two's complement)"
+      min: -2048.0
+      max: 2047.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_CUR_UNW:
+      column: MGL_SRV_ROLL_CUR_UNW
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL emulator current unwrapped
+      min: -10000000.0
+      max: 10000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_ERR:
+      column: MGL_SRV_ROLL_ERR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL circular position error
+      min: -2048.0
+      max: 2048.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_OPT:
+      column: MGL_SRV_ROLL_OPT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL raw options byte
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_TRQ_SET:
+      column: MGL_SRV_ROLL_TRQ_SET
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL torque setting nibble
+      min: 0.0
+      max: 15.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_STAT:
+      column: MGL_SRV_ROLL_STAT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL raw status byte
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_VOLT:
+      column: MGL_SRV_ROLL_VOLT
+      units: V
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL simulated servo supply
+      min: 0.0
+      max: 32.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_TRQ:
+      column: MGL_SRV_ROLL_TRQ
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL measured torque raw
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_HZ:
+      column: MGL_SRV_ROLL_HZ
+      units: Hz
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL command rate
+      min: 0.0
+      max: 100.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_AGE:
+      column: MGL_SRV_ROLL_AGE
+      units: ms
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL command age
+      min: 0.0
+      max: 60000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_CMDS:
+      column: MGL_SRV_ROLL_CMDS
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL command count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_RPLY:
+      column: MGL_SRV_ROLL_RPLY
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL reply count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_BAD:
+      column: MGL_SRV_ROLL_BAD
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL invalid command count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_TMO:
+      column: MGL_SRV_ROLL_TMO
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL timeout count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_ROLL_ENG_REQ:
+      column: MGL_SRV_ROLL_ENG_REQ
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL XTreme engage request (options bit 0, provisional)
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_TRQ_RST:
+      column: MGL_SRV_ROLL_TRQ_RST
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL XTreme torque-reset request (options bit 1, provisional)
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_ENG:
+      column: MGL_SRV_ROLL_ENG
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL emulator reported engaged
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_SLIP:
+      column: MGL_SRV_ROLL_SLIP
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL emulator reported slipping
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_VALARM:
+      column: MGL_SRV_ROLL_VALARM
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL emulator voltage alarm
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_IDOK:
+      column: MGL_SRV_ROLL_IDOK
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL servo identity assigned
+      initial: false
+      tol: 2000
+    MGL_SRV_ROLL_IDARM:
+      column: MGL_SRV_ROLL_IDARM
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: ROLL identify_armed
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_NUM:
+      column: MGL_SRV_PITCH_NUM
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH assigned servo number
+      min: 0.0
+      max: 16.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_ADDR:
+      column: MGL_SRV_PITCH_ADDR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH MGL device address
+      min: 0.0
+      max: 31.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_STATE:
+      column: MGL_SRV_PITCH_STATE
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH emulator state 0-4
+      min: 0.0
+      max: 4.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_TGT:
+      column: MGL_SRV_PITCH_TGT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: "PITCH XTreme target (12-bit two's complement, up negative)"
+      min: -2048.0
+      max: 2047.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_TGT_UNW:
+      column: MGL_SRV_PITCH_TGT_UNW
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH XTreme target unwrapped
+      min: -10000000.0
+      max: 10000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_CUR:
+      column: MGL_SRV_PITCH_CUR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: "PITCH emulator current (12-bit two's complement)"
+      min: -2048.0
+      max: 2047.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_CUR_UNW:
+      column: MGL_SRV_PITCH_CUR_UNW
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH emulator current unwrapped
+      min: -10000000.0
+      max: 10000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_ERR:
+      column: MGL_SRV_PITCH_ERR
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH circular position error
+      min: -2048.0
+      max: 2048.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_OPT:
+      column: MGL_SRV_PITCH_OPT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH raw options byte
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_TRQ_SET:
+      column: MGL_SRV_PITCH_TRQ_SET
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH torque setting nibble
+      min: 0.0
+      max: 15.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_STAT:
+      column: MGL_SRV_PITCH_STAT
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH raw status byte
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_VOLT:
+      column: MGL_SRV_PITCH_VOLT
+      units: V
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH simulated servo supply
+      min: 0.0
+      max: 32.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_TRQ:
+      column: MGL_SRV_PITCH_TRQ
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH measured torque raw
+      min: 0.0
+      max: 255.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_HZ:
+      column: MGL_SRV_PITCH_HZ
+      units: Hz
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH command rate
+      min: 0.0
+      max: 100.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_AGE:
+      column: MGL_SRV_PITCH_AGE
+      units: ms
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH command age
+      min: 0.0
+      max: 60000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_CMDS:
+      column: MGL_SRV_PITCH_CMDS
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH command count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_RPLY:
+      column: MGL_SRV_PITCH_RPLY
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH reply count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_BAD:
+      column: MGL_SRV_PITCH_BAD
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH invalid command count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_TMO:
+      column: MGL_SRV_PITCH_TMO
+      units: ""
+      type: float
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH timeout count
+      min: 0.0
+      max: 1000000000.0
+      initial: 0.0
+      tol: 2000
+    MGL_SRV_PITCH_ENG_REQ:
+      column: MGL_SRV_PITCH_ENG_REQ
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH XTreme engage request (options bit 0, provisional)
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_TRQ_RST:
+      column: MGL_SRV_PITCH_TRQ_RST
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH XTreme torque-reset request (options bit 1, provisional)
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_ENG:
+      column: MGL_SRV_PITCH_ENG
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH emulator reported engaged
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_SLIP:
+      column: MGL_SRV_PITCH_SLIP
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH emulator reported slipping
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_VALARM:
+      column: MGL_SRV_PITCH_VALARM
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH emulator voltage alarm
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_IDOK:
+      column: MGL_SRV_PITCH_IDOK
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH servo identity assigned
+      initial: false
+      tol: 2000
+    MGL_SRV_PITCH_IDARM:
+      column: MGL_SRV_PITCH_IDARM
+      units: ""
+      type: bool
+      rate_hz: 10
+      source: mgl_servo
+      description: PITCH identify_armed
+      initial: false
+      tol: 2000

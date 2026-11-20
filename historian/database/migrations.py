@@ -31,7 +31,7 @@ def set_schema_version(conn: sqlite3.Connection, version: int = SCHEMA_VERSION) 
 
 
 def migrate(conn: sqlite3.Connection) -> int:
-    """Apply migrations up to SCHEMA_VERSION. v1 is create-only via schema SQL."""
+    """Apply migrations up to SCHEMA_VERSION. Extra FIX columns come from historian.yaml."""
     current = get_schema_version(conn)
     if current is None:
         return SCHEMA_VERSION
@@ -39,5 +39,19 @@ def migrate(conn: sqlite3.Connection) -> int:
         raise RuntimeError(
             f"database schema_version {current} is newer than code {SCHEMA_VERSION}"
         )
-    # Future: if current < SCHEMA_VERSION: run ALTER scripts
+    if current < 2:
+        conn.executescript(
+            """
+            CREATE TABLE IF NOT EXISTS signal (
+                fix_key      TEXT PRIMARY KEY,
+                column_name  TEXT NOT NULL,
+                units        TEXT,
+                type         TEXT NOT NULL,
+                rate_hz      INTEGER NOT NULL,
+                source       TEXT
+            );
+            """
+        )
+        set_schema_version(conn, 2)
+        current = 2
     return current

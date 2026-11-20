@@ -10,12 +10,12 @@ def test_live_state_includes_mgl_above_stratux_keys():
     for key in ("MGL_AT_PITCH", "MGL_AT_ROLL", "MGL_AT_HEAD"):
         assert key in LIVE_KEYS
     samples = {
-        "PITCH": _Sample(1.5),
-        "ROLL": _Sample(-2.0),
-        "HEAD": _Sample(90.0),
-        "PALT": _Sample(1200.0),
-        "VS": _Sample(0.0),
-        "GS": _Sample(0.0),
+        "STRX_PITCH": _Sample(1.5),
+        "STRX_ROLL": _Sample(-2.0),
+        "STRX_HEAD": _Sample(90.0),
+        "STRX_PALT": _Sample(1200.0),
+        "STRX_VS": _Sample(0.0),
+        "STRX_GS": _Sample(0.0),
         "MGL_AT_PITCH": _Sample(3.5),
         "MGL_AT_ROLL": _Sample(-6.1),
         "MGL_AT_HEAD": _Sample(90.0),
@@ -43,12 +43,12 @@ def test_live_state_includes_mgl_above_stratux_keys():
     samples["MGL_NMEA_LAT"] = _Sample(-37.816528)
     samples["MGL_NMEA_LONG"] = _Sample(144.976586)
     samples["MGL_NMEA_GS"] = _Sample(0.547)
-    samples["LAT"] = _Sample(-37.81654)
-    samples["LONG"] = _Sample(144.97688)
-    samples["TRACK"] = _Sample(12.5)
-    samples["ALT"] = _Sample(78.4)
-    samples["GPS_SATS_TRACKED"] = _Sample(17)
-    samples["GPS_FIX_TYPE"] = _Sample(2)
+    samples["STRX_LAT"] = _Sample(-37.81654)
+    samples["STRX_LONG"] = _Sample(144.97688)
+    samples["STRX_TRACK"] = _Sample(12.5)
+    samples["STRX_ALT"] = _Sample(78.4)
+    samples["STRX_GPS_SATS_TRACKED"] = _Sample(17)
+    samples["STRX_GPS_FIX_TYPE"] = _Sample(2)
     msg = build_state_message(samples, {"state": "IDLE"})
     assert msg["nmea"]["lat"] == -37.816528
     assert msg["nmea"]["lon"] == 144.976586
@@ -59,4 +59,4 @@ def test_live_state_includes_mgl_above_stratux_keys():
     assert msg["position"]["gps_alt"] == 78.4
     assert msg["position"]["sats"] == 17
     assert msg["position"]["fix_type"] == 2
-    assert "GPS_SATS_TRACKED" in LIVE_KEYS
+    assert "STRX_GPS_SATS_TRACKED" in LIVE_KEYS

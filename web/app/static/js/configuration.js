@@ -52,11 +52,29 @@
         null,
         2
       );
-      document.getElementById("signals").textContent = JSON.stringify(
-        d.historian_signals,
-        null,
-        2
-      );
+      const hs = d.historian_signals || {};
+      document.getElementById("signals-summary").textContent =
+        `${hs.signal_count ?? 0} FIX keys · ${hs.fast_count ?? 0} at ${hs.fast_rate_hz ?? 10} Hz · ` +
+        `${hs.slow_count ?? 0} at ${hs.slow_rate_hz ?? 1} Hz. Units are the values stored in FIX.`;
+      const tb = document.querySelector("#signals-table tbody");
+      tb.innerHTML = "";
+      const signals = hs.signals || {};
+      Object.keys(signals)
+        .sort()
+        .forEach((key) => {
+          const s = signals[key] || {};
+          const tr = document.createElement("tr");
+          tr.innerHTML = `<td>${esc(key)}</td>
+            <td>${esc(s.column)}</td>
+            <td>${esc(s.units ?? "")}</td>
+            <td>${esc(s.type)}</td>
+            <td>${esc(s.rate_hz)}</td>
+            <td>${esc(s.min ?? "")}</td>
+            <td>${esc(s.max ?? "")}</td>
+            <td>${esc(s.source)}</td>
+            <td>${esc(s.description ?? "")}</td>`;
+          tb.appendChild(tr);
+        });
     })
     .catch((e) => {
       document.getElementById("wifi-note").textContent = String(e);

@@ -194,36 +194,6 @@
     );
   }
 
-  fetchJson("/api/flights")
-    .then((d) => {
-      const tb = document.getElementById("flights-body");
-      const flights = d.flights || [];
-      document.getElementById("flights-count").textContent =
-        "Flights: " + flights.length;
-      document.getElementById("flights-meta").textContent =
-        flights.length + " recorded";
-      tb.innerHTML = "";
-      if (!flights.length) {
-        tb.innerHTML =
-          '<tr><td colspan="4" class="muted">No flights recorded yet</td></tr>';
-        return;
-      }
-      flights.forEach((f) => {
-        const tr = document.createElement("tr");
-        tr.innerHTML = `<td><a href="/flights/${esc(f.flight_id)}">${esc(
-          f.flight_id
-        )}</a></td>
-        <td>${esc(f.flight_date || "")}</td>
-        <td>${esc(f.historian_start_utc || "")}</td>
-        <td>${esc(f.actual_10hz_frames ?? "")}</td>`;
-        tb.appendChild(tr);
-      });
-    })
-    .catch((e) => {
-      document.getElementById("flights-body").innerHTML =
-        '<tr><td colspan="4" class="muted">' + esc(e) + "</td></tr>";
-    });
-
   fetchJson("/api/external-data")
     .then(renderExternal)
     .catch((e) => {
@@ -232,4 +202,195 @@
       document.getElementById("external-data").innerHTML =
         '<p class="muted">' + esc(e) + "</p>";
     });
+
+  const avFlight = document.getElementById("avplan-flight");
+  const avGpx = document.getElementById("avplan-gpx");
+  const avHint = document.getElementById("avplan-hint");
+  const avMsg = document.getElementById("avplan-msg");
+  const avMeta = document.getElementById("avplan-meta");
+  let gpxRows = [];
+
+  function renderFlightTable(flights) {
+    const tb = document.getElementById("flights-body");
+    document.getElementById("flights-count").textContent = "Flights: " + flights.length;
+    document.getElementById("flights-meta").textContent = flights.length + " recorded";
+    tb.innerHTML = "";
+    if (!flights.length) {
+      tb.innerHTML = '<tr><td colspan="4" class="muted">No flights recorded yet</td></tr>';
+      return;
+    }
+    flights.forEach((f) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td><a href="/flights/${esc(f.flight_id)}">${esc(
+        f.flight_id
+      )}</a></td>
+        <td>${esc(f.flight_date || "")}</td>
+        <td>${esc(f.historian_start_utc || "")}</td>
+        <td>${esc(f.actual_10hz_frames ?? "")}</td>`;
+      tb.appendChild(tr);
+    });
+  }
+
+  function fillFlightSelect(flights) {
+    const keep = avFlight.value;
+    avFlight.innerHTML = "";
+    if (!flights.length) {
+      const o = document.createElement("option");
+      o.value = "";
+      o.textContent = "No recorded flights — create from GPX";
+      avFlight.appendChild(o);
+      return;
+    }
+    flights.forEach((f) => {
+      const o = document.createElement("option");
+      o.value = f.flight_id;
+      o.textContent =
+        f.flight_id +
+        (f.historian_start_utc ? " · " + String(f.historian_start_utc).replace("T", " ").slice(0, 16) : "");
+      avFlight.appendChild(o);
+    });
+    if (keep && flights.some((f) => f.flight_id === keep)) avFlight.value = keep;
+  }
+
+  async function loadFlights() {
+    const d = await fetchJson("/api/flights");
+    const flights = d.flights || [];
+    renderFlightTable(flights);
+    fillFlightSelect(flights);
+    return flights;
+  }
+
+  function fillGpxSelect(rows) {
+    gpxRows = rows || [];
+    avGpx.innerHTML = "";
+    const usable = gpxRows.filter((g) => g.has_track && !g.error);
+    const rest = gpxRows.filter((g) => !g.has_track || g.error);
+    const add = (g, label) => {
+      const o = document.createElement("option");
+      o.value = g.name;
+      o.textContent = label;
+      avGpx.appendChild(o);
+    };
+    if (!gpxRows.length) {
+      const o = document.createElement("option");
+      o.value = "";
+      o.textContent = "No GPX in flight-plans";
+      avGpx.appendChild(o);
+      avHint.textContent = "Copy the completed AvPlan GPX to the Pi share (cozy-data / flight-plans).";
+      return;
+    }
+    usable.forEach((g) => {
+      const mark = g.suggested ? " · same day" : g.same_day ? " · same day, check track" : "";
+      add(
+        g,
+        g.name +
+          " — " +
+          (g.route_name || "route") +
+          " · " +
+          (g.track_points || 0) +
+          " pts" +
+          mark
+      );
+    });
+    rest.forEach((g) => {
+      add(g, g.name + (g.has_track ? "" : " — plan only (no track)"));
+    });
+    const first = usable[0] || gpxRows[0];
+    if (first) avGpx.value = first.name;
+    const sug = usable.filter((g) => g.suggested);
+    avHint.textContent = sug.length
+      ? sug.length + " GPX file(s) on the same UTC day with a track."
+      : usable.length
+        ? "No same-day track file; showing other GPX with tracks."
+        : "GPX files are present but none have a timed track yet.";
+    avMeta.textContent = usable.length ? usable.length + " with track" : "no track yet";
+  }
+
+  async function loadAvplanGpx() {
+    const id = avFlight.value;
+    const url = "/api/avplan/gpx" + (id ? "?flight_id=" + encodeURIComponent(id) : "");
+    const d = await fetchJson(url);
+    fillGpxSelect(d.gpx || []);
+  }
+
+  loadFlights()
+    .then(loadAvplanGpx)
+    .catch((e) => {
+      document.getElementById("flights-body").innerHTML =
+        '<tr><td colspan="4" class="muted">' + esc(e) + "</td></tr>";
+      avMsg.textContent = String(e);
+    });
+
+  avFlight.onchange = loadAvplanGpx;
+
+  document.getElementById("btn-avplan-merge").onclick = async () => {
+    const flightId = avFlight.value;
+    const gpxName = avGpx.value;
+    if (!flightId || !gpxName) {
+      avMsg.textContent = "Select a flight and a GPX file";
+      return;
+    }
+    avMsg.textContent = "Merging…";
+    try {
+      const r = await fetch("/api/avplan/import", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ flight_id: flightId, gpx_name: gpxName }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.ok === false) {
+        avMsg.textContent = d.detail || d.error || "merge failed";
+        return;
+      }
+      avMsg.textContent =
+        "Merged " +
+        d.frames_updated +
+        " frames from " +
+        d.gpx +
+        " (mean sync " +
+        (d.mean_sync_error_ms ?? "—") +
+        " ms, unmatched " +
+        d.track_unmatched +
+        ")";
+    } catch (e) {
+      avMsg.textContent = String(e);
+    }
+  };
+
+  document.getElementById("btn-avplan-create").onclick = async () => {
+    const gpxName = avGpx.value;
+    if (!gpxName) {
+      avMsg.textContent = "Select a GPX file with a timed track";
+      return;
+    }
+    avMsg.textContent = "Creating flight…";
+    try {
+      const r = await fetch("/api/avplan/create-flight", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ gpx_name: gpxName }),
+      });
+      const d = await r.json();
+      if (!r.ok || d.ok === false) {
+        avMsg.textContent = d.detail || d.error || "create failed";
+        return;
+      }
+      avMsg.textContent =
+        "Created " +
+        d.flight_id +
+        " from " +
+        d.gpx +
+        " (" +
+        d.frames_created +
+        " points, " +
+        (d.origin || "?") +
+        " → " +
+        (d.destination || "?") +
+        ")";
+      await loadFlights();
+      avFlight.value = d.flight_id;
+    } catch (e) {
+      avMsg.textContent = String(e);
+    }
+  };
 })();

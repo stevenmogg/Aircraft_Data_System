@@ -78,11 +78,19 @@ ssh stratux 'sudo overlayctl unlock
   systemctl status cozy-historian --no-pager'
 ```
 
-## Schema (v1)
+## Schema (v2)
 
-Tables: `aircraft`, `aircraft_configuration`, `configuration_item`, `flight`, `flight_source`, `historian_10hz`, `historian_1hz`, `event`, `meta`.
+Tables: `aircraft`, `aircraft_configuration`, `configuration_item`, `flight`, `flight_source`, `historian_10hz`, `historian_1hz`, `event`, `signal`, `meta`.
+
+`historian.yaml` lists **every remaining FIX-Gateway database key** under `signals:`, including units, description, min/max, initial, and tol copied from FIX. On `init-db` / daemon start those keys become SQLite columns; `signal` copies key, column, units, type, rate, and source.
+
+- **10 Hz:** Stratux GPS/AHRS and MGL numeric keys (Airtalk, RDAC, NMEA, servo). Legacy columns stay `fix_lat`, `fix_pitch`, … so existing flights still work.
+- **1 Hz:** FIX system keys and all `str` keys.
+- **Units:** Historian does not convert. Convert on ingest into FIX; yaml `units:` is the storage contract (`ft`, `degF`, `deg`, `knots`, …).
 
 Seeded: aircraft `COZ` / `VH-COZ`, configuration `COZ_CFG_001`.
+
+Polling ~130 keys at 10 Hz over NetFIX `@r` may overrun the 100 ms tick on a loaded Pi — watch `timing_overruns` after Start. Slow keys are read only on the 1 Hz frames.
 
 ### Implemented vs pending
 

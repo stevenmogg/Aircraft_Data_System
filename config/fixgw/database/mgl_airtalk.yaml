@@ -1,6 +1,6 @@
 items:
 # MGL Airtalk source-specific keys (prefix MGL_AT_).
-# Canonical PITCH/ROLL/HEAD remain Stratux. Roll is bank as received
+# Canonical STRX_PITCH/STRX_ROLL/STRX_HEAD remain Stratux. Roll is bank as received
 # (positive left on this airframe — not ARINC right-wing-down).
 
 - key: MGL_AT_PITCH

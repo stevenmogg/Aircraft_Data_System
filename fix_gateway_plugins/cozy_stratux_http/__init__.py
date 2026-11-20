@@ -5,7 +5,7 @@ real pitch/roll in that message when GPS is valid (isAHRSValid). Without GPS,
 GDL90 sends 0x7FFF sentinels even though /getSituation has live AHRS.
 
 This plugin polls Stratux's JSON API so AHRS works on the bench without GPS,
-and publishes GPS ownship (LAT/LONG/GS/TRACK/…) when Stratux has a fix.
+and publishes GPS ownship (STRX_LAT/STRX_LONG/STRX_GS/STRX_TRACK/…) when Stratux has a fix.
 """
 
 from __future__ import annotations
@@ -75,66 +75,66 @@ class MainThread(threading.Thread):
         pitch = d.get("AHRSPitch")
         roll = d.get("AHRSRoll")
         if _valid(pitch):
-            write("PITCH", float(pitch))
+            write("STRX_PITCH", float(pitch))
         if _valid(roll):
-            write("ROLL", float(roll))
+            write("STRX_ROLL", float(roll))
 
         head = d.get("AHRSGyroHeading")
         if _valid(head):
-            write("HEAD", float(head))
+            write("STRX_HEAD", float(head))
 
         slip = d.get("AHRSSlipSkid")
         if _valid(slip):
             # Match stock Stratux GDL90 plugin: ALAT = -sin(slip_skid deg)
-            write("ALAT", -math.sin(float(slip) * math.pi / 180.0))
+            write("STRX_ALAT", -math.sin(float(slip) * math.pi / 180.0))
 
-        # Baro is independent of GPS / isAHRSValid — keep on PALT always.
+        # Baro is independent of GPS / isAHRSValid — keep on STRX_PALT always.
         if d.get("BaroPressureAltitude") is not None:
-            write("PALT", float(d["BaroPressureAltitude"]))
-            # Until GPS altitude is available, also publish baro as ALT.
+            write("STRX_PALT", float(d["BaroPressureAltitude"]))
+            # Until GPS altitude is available, also publish baro as STRX_ALT.
             if not (
                 d.get("GPSFixQuality", 0)
                 and d.get("GPSAltitudeMSL") is not None
                 and _valid(d.get("GPSLatitude"))
             ):
-                write("ALT", float(d["BaroPressureAltitude"]))
+                write("STRX_ALT", float(d["BaroPressureAltitude"]))
         if d.get("BaroVerticalSpeed") is not None:
-            write("VS", float(d["BaroVerticalSpeed"]))
+            write("STRX_VS", float(d["BaroVerticalSpeed"]))
 
         # GPS ownship when Stratux has a usable fix
         fix_q = int(d.get("GPSFixQuality") or 0)
         lat = d.get("GPSLatitude")
         lon = d.get("GPSLongitude")
         if fix_q >= 1 and _valid(lat) and _valid(lon):
-            write("LAT", float(lat))
-            write("LONG", float(lon))
-            _safe_write(write, "GPS_FIX_TYPE", fix_q)
+            write("STRX_LAT", float(lat))
+            write("STRX_LONG", float(lon))
+            _safe_write(write, "STRX_GPS_FIX_TYPE", fix_q)
 
             if d.get("GPSGroundSpeed") is not None:
-                write("GS", float(d["GPSGroundSpeed"]))
+                write("STRX_GS", float(d["GPSGroundSpeed"]))
             if d.get("GPSTrueCourse") is not None and _valid(d.get("GPSTrueCourse")):
-                write("TRACK", float(d["GPSTrueCourse"]))
+                write("STRX_TRACK", float(d["GPSTrueCourse"]))
                 # Prefer GPS track for HEAD when AHRS mag/gyro heading is invalid
                 if not _valid(head):
-                    write("HEAD", float(d["GPSTrueCourse"]))
+                    write("STRX_HEAD", float(d["GPSTrueCourse"]))
 
             if d.get("GPSAltitudeMSL") is not None:
-                write("ALT", float(d["GPSAltitudeMSL"]))
+                write("STRX_ALT", float(d["GPSAltitudeMSL"]))
             if d.get("GPSHeightAboveEllipsoid") is not None:
-                _safe_write(write, "GPS_ELLIPSOID_ALT", float(d["GPSHeightAboveEllipsoid"]))
+                _safe_write(write, "STRX_GPS_ELLIPSOID_ALT", float(d["GPSHeightAboveEllipsoid"]))
             if d.get("GPSVerticalSpeed") is not None and d.get("BaroVerticalSpeed") is None:
-                write("VS", float(d["GPSVerticalSpeed"]))
+                write("STRX_VS", float(d["GPSVerticalSpeed"]))
 
             sats = d.get("GPSSatellitesTracked")
             if sats is None:
                 sats = d.get("GPSSatellites")
             if sats is not None:
-                _safe_write(write, "GPS_SATS_TRACKED", int(sats))
+                _safe_write(write, "STRX_GPS_SATS_TRACKED", int(sats))
 
             if d.get("GPSHorizontalAccuracy") is not None:
-                _safe_write(write, "GPS_ACCURACY_HORIZ", float(d["GPSHorizontalAccuracy"]))
+                _safe_write(write, "STRX_GPS_ACCURACY_HORIZ", float(d["GPSHorizontalAccuracy"]))
             if d.get("GPSVerticalAccuracy") is not None:
-                _safe_write(write, "GPS_ACCURACY_VERTICAL", float(d["GPSVerticalAccuracy"]))
+                _safe_write(write, "STRX_GPS_ACCURACY_VERTICAL", float(d["GPSVerticalAccuracy"]))
 
             self.parent.status["gps"] = {
                 "fix_quality": fix_q,

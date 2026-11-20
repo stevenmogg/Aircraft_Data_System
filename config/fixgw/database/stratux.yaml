@@ -1,0 +1,145 @@
+# Stratux GPS / AHRS keys (USB u-blox via Stratux HTTP). Prefix STRX_.
+# MGL attitude/GPS stay on MGL_AT_* and MGL_NMEA_*.
+
+items:
+- key: STRX_LAT
+  description: Stratux GPS latitude
+  type: float
+  min: -90.0
+  max: 90.0
+  units: deg
+  initial: 0.0
+  tol: 20000
+
+- key: STRX_LONG
+  description: Stratux GPS longitude
+  type: float
+  min: -180.0
+  max: 180.0
+  units: deg
+  initial: 0.0
+  tol: 20000
+
+- key: STRX_GS
+  description: Stratux GPS ground speed
+  type: float
+  min: 0.0
+  max: 2000.0
+  units: knots
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_ALT
+  description: Stratux GPS altitude MSL (GPSAltitudeMSL, already feet)
+  type: float
+  min: -2000.0
+  max: 60000.0
+  units: ft
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_PALT
+  description: Stratux pressure altitude (BaroPressureAltitude)
+  type: float
+  min: -1000.0
+  max: 60000.0
+  units: ft
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_VS
+  description: Stratux vertical speed
+  type: float
+  min: -30000.0
+  max: 30000.0
+  units: ft/min
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_HEAD
+  description: Stratux magnetic / gyro heading
+  type: float
+  min: 0.0
+  max: 359.9
+  units: deg
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_TRACK
+  description: Stratux GPS true course
+  type: float
+  min: 0.0
+  max: 359.9
+  units: deg
+  initial: 0.0
+  tol: 2000
+
+- key: STRX_ROLL
+  description: Stratux roll angle
+  type: float
+  min: -180.0
+  max: 180.0
+  units: deg
+  initial: 0.0
+  tol: 300
+
+- key: STRX_PITCH
+  description: Stratux pitch angle
+  type: float
+  min: -90.0
+  max: 90.0
+  units: deg
+  initial: 0.0
+  tol: 300
+
+- key: STRX_ALAT
+  description: Stratux lateral acceleration (from slip/skid)
+  type: float
+  min: -30.0
+  max: 30.0
+  units: g
+  initial: 0.0
+  tol: 300
+
+- key: STRX_GPS_SATS_TRACKED
+  description: Stratux GPS satellites tracked
+  type: int
+  min: 0
+  max: 200
+  initial: 0
+  tol: 2000
+
+- key: STRX_GPS_ACCURACY_HORIZ
+  description: Stratux GPS horizontal accuracy
+  type: float
+  units: ft
+  min: 0
+  max: 200
+  initial: 0
+  tol: 2000
+
+- key: STRX_GPS_ACCURACY_VERTICAL
+  description: Stratux GPS vertical accuracy
+  type: float
+  units: ft
+  min: 0
+  max: 200
+  initial: 0
+  tol: 2000
+
+- key: STRX_GPS_FIX_TYPE
+  description: "0-1: no fix, 2: 2D fix, 3: 3D fix. 4: 3D with DGPS. 5: 3D with RTK"
+  type: int
+  min: 0
+  max: 5
+  initial: 0
+  tol: 2000
+
+- key: STRX_GPS_ELLIPSOID_ALT
+  description: Stratux height above ellipsoid
+  type: float
+  units: ft
+  min: -2000
+  max: 60000
+  initial: 0
+  tol: 2000

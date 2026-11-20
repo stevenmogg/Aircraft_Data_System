@@ -1,14 +1,5 @@
-# This is where you define how many engines you have and such
-# You could also add additional variables too
+# Suffix expansion for FIX keys that contain a lowercase letter.
+# Only `n` is used now (system.yaml QVOTEn). Other stock multipliers
+# went away with generic/engine/radio/ahrs files.
 variables:
-  e: 1  # Engines
-  c: 6  # Cylinders
-  a: 8  # Generic Analogs
-  b: 30 # Generic Buttons
-  g: 4  # Egt Buttons
-  r: 5  # Encoders
-  t: 3  # Fuel Tanks
-  n: 5  # Nodes
-  s: 40 # Touchscreen buttons
-  d: 4  # MGL V16 Radios
-  w: 3  # Wheels
+  n: 5  # Nodes (quorum votes)

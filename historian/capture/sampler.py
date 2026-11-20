@@ -13,6 +13,7 @@ from typing import Any, Callable
 from historian.capture.events import QualityTracker
 from historian.capture.fix_client import FixClient
 from historian.capture.timing import FlightClock, utc_iso
+from historian.database.fix_catalog import coerce_value, load_signals_from_historian_cfg
 from historian.database.repository import HistorianDB, load_yaml
 
 log = logging.getLogger("historian.sampler")
@@ -32,8 +33,17 @@ class Sampler:
         self.cfg = historian_cfg
         self.flight_id = flight_id
         self.stop_event = stop_event or threading.Event()
-        self.fast_map: dict[str, str] = dict(historian_cfg.get("fast_signals") or {})
-        self.slow_map: dict[str, str] = dict(historian_cfg.get("slow_signals") or {})
+        signals = load_signals_from_historian_cfg(historian_cfg)
+        self.fast_map = {
+            key: spec
+            for key, spec in signals.items()
+            if int(spec.get("rate_hz") or 10) == 10
+        }
+        self.slow_map = {
+            key: spec
+            for key, spec in signals.items()
+            if int(spec.get("rate_hz") or 10) != 10
+        }
         self.rate = float(historian_cfg.get("fast_rate_hz") or 10)
         self.tolerance = float(historian_cfg.get("sample_tolerance_s") or 0.05)
         self.commit_every = int(historian_cfg.get("commit_every_frames") or 10)
@@ -50,9 +60,14 @@ class Sampler:
         self.stop_event.set()
 
     def run(self, max_frames: int | None = None) -> dict:
-        keys = sorted(set(self.fast_map) | set(self.slow_map))
-        log.info("connecting FIX for %d keys", len(keys))
-        self.fix.connect(keys)
+        fast_keys = list(self.fast_map)
+        slow_keys = list(self.slow_map)
+        log.info(
+            "connecting FIX for %d fast + %d slow keys",
+            len(fast_keys),
+            len(slow_keys),
+        )
+        self.fix.connect(fast_keys + slow_keys)
         self.clock.start()
 
         conn = self.db.connect()
@@ -64,6 +79,9 @@ class Sampler:
                 frame, flight_time_s, hist_utc, overrun = self.clock.wait_next(
                     self.tolerance
                 )
+                keys = fast_keys
+                if frame % int(self.rate) == 0:
+                    keys = fast_keys + slow_keys
                 samples = self.fix.read_many(keys)
                 self._write_frame(conn, frame, flight_time_s, hist_utc, samples, overrun)
                 pending += 1
@@ -92,14 +110,11 @@ class Sampler:
         overrun: bool,
     ) -> None:
         fast_cols = {}
-        for fix_key, col in self.fast_map.items():
+        for fix_key, spec in self.fast_map.items():
             s = samples.get(fix_key)
-            val = None if s is None else s.value
+            val = self._stored_value(s, spec)
             flags = "" if s is None else s.flags
-            # Do not store values marked fail/bad as numbers — use NULL
-            if s is not None and ("f" in flags or "b" in flags):
-                val = None
-            fast_cols[col] = val
+            fast_cols[spec["column"]] = val
             for ev in self.quality.update(fix_key, flags, None if s is None else s.value):
                 self.db.insert_event(
                     conn,
@@ -125,13 +140,9 @@ class Sampler:
         if frame % int(self.rate) == 0:
             slow_frame = frame // int(self.rate)
             slow_cols = {}
-            for fix_key, col in self.slow_map.items():
+            for fix_key, spec in self.slow_map.items():
                 s = samples.get(fix_key)
-                val = None if s is None else s.value
-                flags = "" if s is None else s.flags
-                if s is not None and ("f" in flags or "b" in flags):
-                    val = None
-                slow_cols[col] = val
+                slow_cols[spec["column"]] = self._stored_value(s, spec)
             self.db.insert_1hz(
                 conn,
                 self.flight_id,
@@ -153,6 +164,16 @@ class Sampler:
                 value=None,
                 text=f"frame {frame} late > {self.tolerance}s",
             )
+
+
+    @staticmethod
+    def _stored_value(sample, spec: dict[str, Any]):
+        if sample is None:
+            return None
+        if "f" in sample.flags or "b" in sample.flags:
+            return None
+        raw = sample.raw if sample.raw is not None else sample.value
+        return coerce_value(raw, spec)
 
 
 def active_flight_path(data_dir: Path) -> Path:

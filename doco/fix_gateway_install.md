@@ -30,7 +30,7 @@ In `preferences.yaml.custom`:
 - `DEMO: false` — no simulated flight data
 - `STRATUX: true` — Stratux → FIX via HTTP `/getSituation` (`connections/stratux_http.yaml`)
 - Publishes AHRS always; publishes GPS (`LAT`/`LONG`/`GS`/`TRACK`/…) when Stratux has a fix
-- `MGL_AIRTALK: true` — Nano USB Airtalk → `MGL_AT_*` (does not overwrite Stratux `PITCH`/`ROLL`/`HEAD`). FIX-Gateway owns the Nano USB port; `/debug/mgl/airtalk` Watch/Observed/Interface follow FIX.
+- `MGL_AIRTALK: true` — Nano USB Airtalk → `MGL_AT_*` (does not overwrite Stratux `STRX_PITCH`/`STRX_ROLL`/`STRX_HEAD`). FIX-Gateway owns the Nano USB port; `/debug/mgl/airtalk` Watch/Observed/Interface follow FIX.
 - `MGL_CAN: true` — SocketCAN `can0` RDAC → `MGL_RDAC_*` (receive-only). Stock `MGL` plugin stays **off** (it can transmit).
 - `MGL_NMEA: true` — MGL Extreme NMEA 0183 on GPIO UART `/dev/serial0` @ 19200 → `MGL_NMEA_*` (does not overwrite Stratux `LAT`/`LONG`). Stratux GPS is USB. Keep `GPSD: false`.
 - `MGL_SERVO: true` — virtual MGL bank/pitch servos on `can0` → `MGL_SRV_*`. Listen-only until `allow_tx` and `tx_armed` in `connections/mgl_servo.yaml`. Stock `MGL` plugin stays **off**. See [mgl_servo.md](mgl_servo.md).

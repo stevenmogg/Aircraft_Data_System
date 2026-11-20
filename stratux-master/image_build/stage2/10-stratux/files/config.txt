@@ -5,8 +5,8 @@ max_usb_current=1
 usb_max_current_enable=1
 dtparam=i2c_arm=on
 dtparam=i2c1=on
-dtparam=i2c1_baudrate=400000
-dtparam=i2c_arm_baudrate=400000
+dtparam=i2c1_baudrate=100000
+dtparam=i2c_arm_baudrate=100000
 dtparam=spi=on
 
 # MPI3508 3.5" HDMI panel (480x320) on Pi 5.
@@ -19,8 +19,9 @@ disable_fw_kms_setup=1
 #dtoverlay=disable-bt
 enable_uart=1
 
-# i2c serial support
-dtoverlay=sc16is752-i2c,int_pin=4,addr=0x4d,xtal=1843900
+# i2c serial support (only if the NXP SC16IS752 at 0x4d is actually populated).
+# A missing chip makes the Pi 5 I2C controller time out (~1 s) and stalls the AHRS IMU.
+#dtoverlay=sc16is752-i2c,int_pin=4,addr=0x4d,xtal=1843900
 
 # Otherwise TTGO T-Motion will cause kernel panic on bookworm
 dtoverlay=dwc2,dr_mode=host

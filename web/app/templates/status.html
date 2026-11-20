@@ -62,7 +62,7 @@
   </details>
 
   <details class="twisty" open>
-    <summary>Host / cooling <span class="twisty-meta">Pi / power</span></summary>
+    <summary>Host / cooling <span class="twisty-meta">CPU / disk / net / power</span></summary>
     <div class="twisty-body">
       <dl class="kv" id="host-kv"></dl>
     </div>
@@ -78,5 +78,5 @@
   </details>
 {% endblock %}
 {% block scripts %}
-<script src="/static/js/status.js"></script>
+<script src="/static/js/status.js?v={{ static_v('js/status.js') }}"></script>
 {% endblock %}

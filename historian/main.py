@@ -92,6 +92,17 @@ def main(argv: list[str] | None = None) -> int:
     p_show = sub.add_parser("show-flight", help="Show flight summary and sample counts")
     p_show.add_argument("flight_id")
 
+    p_av_flight = sub.add_parser(
+        "import-avplan-flight",
+        help="Create a historian flight from an AvPlan GPX track (no FIX capture)",
+    )
+    p_av_flight.add_argument("gpx", type=Path, help="Path to a completed AvPlan .gpx")
+    p_av_flight.add_argument(
+        "--flight-id",
+        default=None,
+        help="Use this flight_id instead of allocating COZ-YYYYMMDD-NN",
+    )
+
     args = parser.parse_args(argv)
     _setup_logging(args.verbose)
 
@@ -208,6 +219,33 @@ def main(argv: list[str] | None = None) -> int:
         db = HistorianDB.from_config_files(args.config, args.aircraft_config)
         summary = db.flight_summary(args.flight_id)
         for k, v in summary.items():
+            print(f"{k}: {v}")
+        return 0
+
+    if args.command == "import-avplan-flight":
+        from historian.importers.avplan_gpx import create_flight_from_avplan_gpx
+
+        gpx = args.gpx.expanduser().resolve()
+        if not gpx.is_file():
+            print(f"error: not found: {gpx}", file=sys.stderr)
+            return 1
+        db = HistorianDB.from_config_files(args.config, args.aircraft_config)
+        aircraft_id = (db.aircraft_cfg.get("aircraft") or {}).get("aircraft_id")
+        db_parent = Path(hist_cfg.get("database_path") or db.path).parent
+        copy_dir = db_parent / "imports"
+        try:
+            with db.connect() as conn:
+                result = create_flight_from_avplan_gpx(
+                    conn,
+                    gpx,
+                    aircraft_id=aircraft_id,
+                    copy_dir=copy_dir,
+                    flight_id=args.flight_id,
+                )
+        except ValueError as e:
+            print(f"error: {e}", file=sys.stderr)
+            return 1
+        for k, v in result.items():
             print(f"{k}: {v}")
         return 0
 
